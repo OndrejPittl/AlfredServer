@@ -1,12 +1,15 @@
 package cz.ondrejpittl.persistence.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "USERS")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class User {
 
     /**
@@ -71,7 +74,6 @@ public class User {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    @JsonManagedReference
     private List<Post> posts;
 
 
@@ -81,7 +83,6 @@ public class User {
     }
 
     public User(
-            Long id,
             String firstName,
             String lastName,
             String email,
@@ -89,7 +90,6 @@ public class User {
             String photo,
             String slug,
             String password) {
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

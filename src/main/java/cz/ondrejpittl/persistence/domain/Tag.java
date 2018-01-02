@@ -1,10 +1,21 @@
 package cz.ondrejpittl.persistence.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "TAGS")
+@Table(
+    name = "TAGS" /*,
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+    }*/
+)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Tag {
 
     @Id
@@ -12,6 +23,7 @@ public class Tag {
     @Column(updatable = false, nullable = false)
     private Long id;
 
+    //@Column(unique = true)
     private String name;
 
     //@Transient
@@ -35,7 +47,6 @@ public class Tag {
         this.name = value;
     }
 
-    /*
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -47,7 +58,6 @@ public class Tag {
     public int hashCode() {
         return this.name.hashCode();
     }
-    */
 
     public Long getId() {
         return id;

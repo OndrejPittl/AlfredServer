@@ -1,13 +1,18 @@
 package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "POSTS")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Post {
 
     /**
@@ -25,7 +30,7 @@ public class Post {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
-    @JsonBackReference
+    //@JsonBackReference(value = "user-posts")
     private User user;
 
     /**
@@ -58,7 +63,6 @@ public class Post {
         name = "POSTS_HAVE_TAGS",
         joinColumns = {
             @JoinColumn(
-                //name = "postId"
                 name = "postId",
                 referencedColumnName = "id"
             )
@@ -70,7 +74,7 @@ public class Post {
             )
         }
     )
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
 
 
@@ -84,7 +88,7 @@ public class Post {
         this(title, body, image, date, user, null);
     }
 
-    public Post(String title, String body, String image, Date date, User user, List<Tag> tags) {
+    public Post(String title, String body, String image, Date date, User user, Set<Tag> tags) {
         this.title = title;
         this.body = body;
         this.image = image;
@@ -147,11 +151,11 @@ public class Post {
         this.date = date;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 }

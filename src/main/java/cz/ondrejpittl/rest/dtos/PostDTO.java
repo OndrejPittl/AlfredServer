@@ -4,6 +4,7 @@ import cz.ondrejpittl.persistence.domain.Tag;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class PostDTO {
 
@@ -37,7 +38,7 @@ public class PostDTO {
      */
     private Date date;
 
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
 
 
@@ -49,7 +50,7 @@ public class PostDTO {
         this(id, userId, title, body, image, date, null);
     }
 
-    public PostDTO(Long id, Long userId, String title, String body, String image, Date date, List<Tag> tags) {
+    public PostDTO(Long id, Long userId, String title, String body, String image, Date date, Set<Tag> tags) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -107,11 +108,11 @@ public class PostDTO {
         this.date = date;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 }

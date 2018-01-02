@@ -34,7 +34,6 @@ public class PostEndpoint {
         return Response.ok(postRestMapper.toDTO(postService.getPost(id))).build();
     }
 
-
     @POST
     public Response createPost(PostDTO post) {
         return Response.ok(postService.createPost(post)).build();

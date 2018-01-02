@@ -21,8 +21,18 @@ public class UserEndpoint {
     @Inject
     private UserRestMapper userRestMapper;
 
-    @GET
 
+
+    // @TODO: initial mock data
+    @GET
+    @Path("/init")
+    public Response init() {
+        return Response.ok(userService.init()).build();
+    }
+
+    // ------------------------------
+
+    @GET
     public Response getAllUsers() {
         return Response.ok(userRestMapper.toDTOs(userService.getAllUsers())).build();
     }
@@ -33,8 +43,24 @@ public class UserEndpoint {
         return Response.ok(userRestMapper.toDTO(userService.getUser(id))).build();
     }
 
+    @GET
+    @Path("/slug/{slug}")
+    public Response getUser(@PathParam("slug") final String slug) {
+        return Response.ok(userRestMapper.toDTO(userService.getUser(slug))).build();
+    }
+
+    // ------------------------------
+
     @POST
     public Response createUser(UserDTO user) {
         return Response.ok(userService.createUser(user)).build();
+    }
+
+    // ------------------------------
+
+    @DELETE
+    @Path("/{id}")
+    public Response removeUser(@PathParam("id") final Long id) {
+        return Response.ok(userService.removeUser(id)).build();
     }
 }

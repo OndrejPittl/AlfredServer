@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface PostRepository extends EntityRepository<Post, Long> {
 
+
+
 }
