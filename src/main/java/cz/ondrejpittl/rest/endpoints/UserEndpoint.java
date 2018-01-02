@@ -23,18 +23,16 @@ public class UserEndpoint {
 
 
 
-    // @TODO: initial mock data
-    @GET
-    @Path("/init")
-    public Response init() {
-        return Response.ok(userService.init()).build();
-    }
-
-    // ------------------------------
-
     @GET
     public Response getAllUsers() {
         return Response.ok(userRestMapper.toDTOs(userService.getAllUsers())).build();
+    }
+
+    @GET
+    @Path("/init")
+    //TODO: initial mock data
+    public Response init() {
+        return Response.ok(userService.init()).build();
     }
 
     @GET

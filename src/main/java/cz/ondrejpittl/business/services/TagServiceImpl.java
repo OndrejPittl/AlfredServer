@@ -1,5 +1,6 @@
 package cz.ondrejpittl.business.services;
 
+import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.PostRestMapper;
 import cz.ondrejpittl.mappers.TagRestMapper;
 import cz.ondrejpittl.persistence.domain.Post;
@@ -32,9 +33,20 @@ public class TagServiceImpl implements TagService {
     }
 
 
-    @Transactional // @TODO
+    @Transactional
     public Tag createTag(TagDTO tag) {
         return tagRepository.save(tagMapper.fromDTO(tag));
+    }
+
+    public Tag getOrCreateTag(String tag) {
+        Tag t = this.tagRepository.findFirst1ByNameLike(tag);
+
+        if(t == null) {
+            Dev.print("Tag " + tag + " not found. Creating a new one.");
+            t = tagRepository.save(new Tag(tag));
+        }
+
+        return t;
     }
 
 }

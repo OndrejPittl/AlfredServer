@@ -38,7 +38,10 @@ public class PostDTO {
      */
     private Date date;
 
-    private Set<Tag> tags;
+    // set/array Stringů?
+    private Set<TagDTO> tags;
+
+    private Set<CommentDTO> comments;
 
 
 
@@ -47,10 +50,10 @@ public class PostDTO {
     }
 
     public PostDTO(Long id, Long userId, String title, String body, String image, Date date) {
-        this(id, userId, title, body, image, date, null);
+        this(id, userId, title, body, image, date, null, null);
     }
 
-    public PostDTO(Long id, Long userId, String title, String body, String image, Date date, Set<Tag> tags) {
+    public PostDTO(Long id, Long userId, String title, String body, String image, Date date, Set<TagDTO> tags, Set<CommentDTO> comments) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -58,6 +61,7 @@ public class PostDTO {
         this.image = image;
         this.date = date;
         this.tags = tags;
+        this.comments = comments;
     }
 
     public Long getId() {
@@ -108,11 +112,19 @@ public class PostDTO {
         this.date = date;
     }
 
-    public Set<Tag> getTags() {
+    public Set<TagDTO> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(Set<TagDTO> tags) {
         this.tags = tags;
+    }
+
+    public Set<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<CommentDTO> comments) {
+        this.comments = comments;
     }
 }

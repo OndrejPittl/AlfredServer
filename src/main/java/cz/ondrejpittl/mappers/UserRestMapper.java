@@ -8,6 +8,7 @@ import cz.ondrejpittl.rest.dtos.UserDTO;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class UserRestMapper {
         dto.setPassword(user.getPassword());
 
         if (user.getPosts() != null) {
-            dto.setPosts(new LinkedList<PostDTO>(){{
+            dto.setPosts(new HashSet<PostDTO>(){{
                 for (Post post : user.getPosts()) {
                     add(postMapper.toDTO(post));
                 }

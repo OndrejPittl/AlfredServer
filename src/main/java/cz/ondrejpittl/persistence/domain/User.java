@@ -1,11 +1,10 @@
 package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
@@ -13,8 +12,7 @@ import java.util.List;
 public class User {
 
     /**
-     * User ID.
-     * INT, PK
+     * User ID. INT, PK
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,46 +20,39 @@ public class User {
     private Long id;
 
     /**
-     * First name.
-     * VARCHAR(255)
+     * First name. VARCHAR(255)
      */
     private String firstName;
 
     /**
-     * Last name.
-     * VARCHAR(255)
+     * Last name. VARCHAR(255)
      */
     private String lastName;
 
     /**
-     * E-mail.
-     * VARCHAR(255)
+     * E-mail. VARCHAR(255)
      */
     private String email;
 
     /**
-     * Gender.
-     * VARCHAR(255)
+     * Gender. VARCHAR(255)
      */
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
     /**
-     * Profile photo.
-     * VARCHAR(255) TODO: víc?
+     * Profile photo. TEXT
      */
     @Column(columnDefinition = "TEXT")
     private String photo;
 
     /**
-     * URL profile slug.
-     * VARCHAR(255)
+     * URL profile slug. VARCHAR(255)
      */
     private String slug;
 
     /**
-     * Password.
-     * CHAR(32) – MD5 produces 32 B hash
+     * Password. CHAR(32) – MD5 produces 32 B hash
      */
     @Column(columnDefinition = "CHAR(32)")
     private String password;
@@ -74,13 +65,19 @@ public class User {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    private List<Post> posts;
+    private Set<Post> posts;
+
+
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    private Set<Comment> comments;
 
 
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(
             String firstName,
@@ -99,11 +96,11 @@ public class User {
         this.password = password;
     }
 
-    public List<Post> getPosts() {
+    public Set<Post> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
 
@@ -171,5 +168,11 @@ public class User {
         this.password = password;
     }
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
 
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 }

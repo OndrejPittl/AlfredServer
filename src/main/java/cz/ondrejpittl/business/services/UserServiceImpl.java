@@ -1,10 +1,7 @@
 package cz.ondrejpittl.business.services;
 
 import cz.ondrejpittl.mappers.UserRestMapper;
-import cz.ondrejpittl.persistence.domain.Post;
-import cz.ondrejpittl.persistence.domain.Sex;
-import cz.ondrejpittl.persistence.domain.Tag;
-import cz.ondrejpittl.persistence.domain.User;
+import cz.ondrejpittl.persistence.domain.*;
 import cz.ondrejpittl.persistence.repository.PostRepository;
 import cz.ondrejpittl.persistence.repository.TagRepository;
 import cz.ondrejpittl.persistence.repository.UserRepository;
@@ -27,6 +24,9 @@ public class UserServiceImpl implements UserService {
     @Inject
     UserRestMapper userMapper;
 
+    @Inject
+    TagService tagService;
+
 
 
     // @TODO: ---- development-only:
@@ -38,27 +38,27 @@ public class UserServiceImpl implements UserService {
         User u2 = new User("Eliška", "Nesmělá", "eliska.nesmela@seznam.cz", Sex.FEMALE, "http://via.placeholder.com/1000x1000", "eliska-nesmela", "a15fc1614ad4d674cf44f54e69f20db0");
         User u3 = new User("Dominik", "Vzpurný", "dominik.vzpurny@yahoo.com", Sex.MALE, "http://via.placeholder.com/1000x1000", "dominik-vzpurny", "4bd2b007716888ed6bf6c2399a6d7305");
 
-        Tag t1 = new Tag("trip");
-        Tag t2 = new Tag("travelling");
-        Tag t3 = new Tag("prague");
-        Tag t4 = new Tag("shortestway");
-        Tag t5 = new Tag("coffee");
-        Tag t6 = new Tag("aeropress");
-        Tag t7 = new Tag("filteredcoffee");
-        Tag t8 = new Tag("coffeepreparation");
-        Tag t9 = new Tag("cat");
-        Tag t10 = new Tag("pet");
-        Tag t11 = new Tag("treatment");
-        Tag t12 = new Tag("wonders");
-        Tag t13 = new Tag("sevenwonders");
-        Tag t14 = new Tag("hario");
-        Tag t15 = new Tag("v60");
-        Tag t16 = new Tag("intel");
-        Tag t17 = new Tag("computer");
-        Tag t18 = new Tag("computerscience");
-        Tag t19 = new Tag("france");
-        Tag t20 = new Tag("paris");
-        Tag t21 = new Tag("eiffeltower");
+        Tag t1 = tagService.getOrCreateTag("trip");
+        Tag t2 = tagService.getOrCreateTag("travelling");
+        Tag t3 = tagService.getOrCreateTag("prague");
+        Tag t4 = tagService.getOrCreateTag("shortestway");
+        Tag t5 = tagService.getOrCreateTag("coffee");
+        Tag t6 = tagService.getOrCreateTag("aeropress");
+        Tag t7 = tagService.getOrCreateTag("filteredcoffee");
+        Tag t8 = tagService.getOrCreateTag("coffeepreparation");
+        Tag t9 = tagService.getOrCreateTag("cat");
+        Tag t10 = tagService.getOrCreateTag("pet");
+        Tag t11 = tagService.getOrCreateTag("treatment");
+        Tag t12 = tagService.getOrCreateTag("wonders");
+        Tag t13 = tagService.getOrCreateTag("sevenwonders");
+        Tag t14 = tagService.getOrCreateTag("hario");
+        Tag t15 = tagService.getOrCreateTag("v60");
+        Tag t16 = tagService.getOrCreateTag("intel");
+        Tag t17 = tagService.getOrCreateTag("computer");
+        Tag t18 = tagService.getOrCreateTag("computerscience");
+        Tag t19 = tagService.getOrCreateTag("france");
+        Tag t20 = tagService.getOrCreateTag("paris");
+        Tag t21 = tagService.getOrCreateTag("eiffeltower");
 
         Post p1 = new Post("The shortest way Václavské náměstí – Staroměstské náměstí", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", null, new Date(), u1, new HashSet<Tag>(){{ add(t1); add(t2); add(t3); add(t4); }});
         Post p2 = new Post("AeroPress Coffee preparation", "Place one round AeroPress filter into the bottom of a filter cap and screw on the brew chamber. Place brewing chamber on the top of the mug. Add 17 g of freshly ground coffee. Pour with water at a temperature between 93 and 94 °C. Then give it a good stir with the included stirrer so that the grounds settle back down. Add the remaining water so that the brew is at the top of the number 2. Let the water steep for about 10 more seconds. After a total brew time between 45 and 90 seconds, place the plunger into the chamber and apply a steady amount of force to move the plunger downward. Remove the brewing unit from your mug. Enjoy.", null, new Date(), u2, new HashSet<Tag>(){{ add(t5); add(t6); add(t7); add(t8); }});
@@ -70,9 +70,9 @@ public class UserServiceImpl implements UserService {
         Post p8 = new Post("How to Store Coffee", "Your beans’ greatest enemies are air, moisture, heat, and light.<br>To preserve your beans’ fresh roasted flavor as long as possible, store them in an opaque, air-tight container at room temperature. Coffee beans can be beautiful, but avoid clear canisters which will allow light to compromise the taste of your coffee.<br>Keep your beans in a dark and cool location. A cabinet near the oven is often too warm, and so is a spot on the kitchen counter that gets strong afternoon sun.<br>Coffee's retail packaging is generally not ideal for long-term storage. If possible, invest in storage canisters with an airtight seal.", null, new Date(), u2, new HashSet<Tag>(){{ add(t5); }});
         Post p9 = new Post("The Eiffel Tower", "The Eiffel Tower is a wrought iron lattice tower on the Champ de Mars in Paris, France. It is named after the engineer Gustave Eiffel, whose company designed and built the tower.", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/480px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg", new Date(), u1, new HashSet<Tag>(){{ add(t1); add(t2); add(t19); add(t20); add(t21); }});
 
-        u1.setPosts(new LinkedList<Post>(){{ add(p1); add(p4); add(p9); }});
-        u2.setPosts(new LinkedList<Post>(){{ add(p2); add(p5); add(p7); add(p8); }});
-        u3.setPosts(new LinkedList<Post>(){{ add(p3); add(p6); }});
+        u1.setPosts(new HashSet<Post>(){{ add(p1); add(p4); add(p9); }});
+        u2.setPosts(new HashSet<Post>(){{ add(p2); add(p5); add(p7); add(p8); }});
+        u3.setPosts(new HashSet<Post>(){{ add(p3); add(p6); }});
 
         userRepository.save(u1);
         userRepository.save(u2);
@@ -100,17 +100,27 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDTO user) {
         User u = userMapper.fromDTO(user);
 
-        Tag t = new Tag("druhyTag");
+        Tag t = tagService.getOrCreateTag("druhyTag");
 
-        u.setPosts(new LinkedList<Post>(){{
-            add(new Post("post1_title", "post1_body", "post1_img-path", new Date(), u, new HashSet<Tag>(){{
-                add(new Tag("prvniTag"));
+        u.setPosts(new HashSet<Post>(){{
+            Post p1 = new Post("post1_title", "post1_body", "post1_img-path", new Date(), u, new HashSet<Tag>(){{
+                add(tagService.getOrCreateTag("prvniTag"));
                 add(t);
-            }}));
-            add(new Post("post2_title", "post2_body", "post2_img-path", new Date(), u, new HashSet<Tag>(){{
+            }});
+
+            Post p2 = new Post("post2_title", "post2_body", "post2_img-path", new Date(), u, new HashSet<Tag>(){{
                 add(t);
-                add(new Tag("tretiTag"));
-            }}));
+                add(tagService.getOrCreateTag("tretiTag"));
+            }});
+
+            p1.setComments(new HashSet<Comment>(){{
+                add(new Comment("Velice přínosný příspěvek.", new Date(), u, p1));
+                add(new Comment("Další velice přínosný příspěvek.", new Date(), u, p1));
+                add(new Comment("Jsi blbec.", new Date(), u, p2));
+            }});
+
+            add(p1);
+            add(p2);
         }});
 
         return userRepository.save(u);

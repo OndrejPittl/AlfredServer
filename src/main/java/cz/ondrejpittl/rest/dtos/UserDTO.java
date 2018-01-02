@@ -4,6 +4,7 @@ import cz.ondrejpittl.persistence.domain.Post;
 import cz.ondrejpittl.persistence.domain.Sex;
 
 import java.util.List;
+import java.util.Set;
 
 public class UserDTO {
 
@@ -47,7 +48,7 @@ public class UserDTO {
      */
     private String password;
 
-    private List<PostDTO> posts;
+    private Set<PostDTO> posts;
 
 
 
@@ -74,11 +75,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public List<PostDTO> getPosts() {
+    public Set<PostDTO> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<PostDTO> posts) {
+    public void setPosts(Set<PostDTO> posts) {
         this.posts = posts;
     }
 

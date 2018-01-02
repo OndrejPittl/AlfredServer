@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -23,16 +24,15 @@ public class Tag {
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    //@Column(unique = true)
     private String name;
 
     //@Transient
     @ManyToMany(
         mappedBy = "tags",
         fetch = FetchType.EAGER,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+        cascade = {CascadeType.MERGE}
     )
-    private List<Post> posts;
+    private Set<Post> posts;
 
 
 
@@ -75,11 +75,11 @@ public class Tag {
         this.name = name;
     }
 
-    public List<Post> getPosts() {
+    public Set<Post> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
 }

@@ -12,7 +12,7 @@ public class TagDTO {
 
     private String name;
 
-    private List<Post> posts;
+    //private List<PostDTO> posts;
 
 
     public TagDTO() {}
@@ -38,11 +38,13 @@ public class TagDTO {
         this.name = name;
     }
 
-    public List<Post> getPosts() {
+    /*
+    public List<PostDTO> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(List<PostDTO> posts) {
         this.posts = posts;
     }
+    */
 }
