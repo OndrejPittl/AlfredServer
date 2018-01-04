@@ -24,15 +24,14 @@ public class UserEndpoint {
 
 
     @GET
-    public Response getAllUsers() {
-        return Response.ok(userRestMapper.toDTOs(userService.getAllUsers())).build();
+    public Response getAllActiveUsers() {
+        return Response.ok(userRestMapper.toDTOs(userService.getAllActiveUsers())).build();
     }
 
     @GET
-    @Path("/init")
-    //TODO: initial mock data
-    public Response init() {
-        return Response.ok(userService.init()).build();
+    @Path("/all")
+    public Response getAllUsers() {
+        return Response.ok(userRestMapper.toDTOs(userService.getAllUsers())).build();
     }
 
     @GET
@@ -59,6 +58,18 @@ public class UserEndpoint {
     @DELETE
     @Path("/{id}")
     public Response removeUser(@PathParam("id") final Long id) {
-        return Response.ok(userService.removeUser(id)).build();
+        return Response.ok(userService.disableUser(id)).build();
+    }
+
+
+
+
+
+    // -----------------------------------------------------------------------------
+    @GET
+    @Path("/init")
+    //TODO: initial mock data
+    public Response init() {
+        return Response.ok(userService.init()).build();
     }
 }

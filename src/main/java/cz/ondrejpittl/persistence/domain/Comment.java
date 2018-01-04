@@ -16,9 +16,10 @@ public class Comment {
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable=false, columnDefinition = "TEXT")
     private String body;
 
+    @Column(nullable=false)
     private Date date;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -31,6 +32,10 @@ public class Comment {
 
 
     public Comment() {}
+
+    public Comment(String body, Date date) {
+        this(body, date, null, null);
+    }
 
     public Comment(String body, Date date, User user, Post post) {
         this.body = body;

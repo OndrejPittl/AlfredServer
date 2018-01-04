@@ -137,5 +137,8 @@
     <orderEntry type="library" name="Maven: org.apache.deltaspike.cdictrl:deltaspike-cdictrl-api:1.8.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.deltaspike.cdictrl:deltaspike-cdictrl-weld:1.8.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.jboss.weld:weld-api:1.1.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.auth0:java-jwt:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.mindrot:jbcrypt:0.3m" level="project" />
   </component>
 </module>

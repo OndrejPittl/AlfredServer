@@ -44,6 +44,7 @@ public class TagServiceImpl implements TagService {
         if(t == null) {
             Dev.print("Tag " + tag + " not found. Creating a new one.");
             t = tagRepository.save(new Tag(tag));
+            //t = new Tag(tag);
         }
 
         return t;

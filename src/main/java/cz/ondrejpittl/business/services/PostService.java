@@ -13,4 +13,6 @@ public interface PostService {
     public Post getPost(Long id);
 
     public Post createPost(PostDTO post);
+
+    public Post removePost(Long id);
 }

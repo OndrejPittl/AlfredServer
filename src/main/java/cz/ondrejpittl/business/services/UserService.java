@@ -16,13 +16,15 @@ public interface UserService {
 
     public List<User> getAllUsers();
 
+    public List<User> getAllActiveUsers();
+
     public User getUser(Long id);
 
     public User getUser(String slug);
 
     public User createUser(UserDTO user);
 
-    public User removeUser(Long id);
+    public User disableUser(Long id);
 
-
+    public boolean checkUserCredentials(User user);
 }

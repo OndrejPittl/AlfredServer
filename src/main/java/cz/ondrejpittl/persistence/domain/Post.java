@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -48,32 +48,27 @@ public class Post {
     /**
      * Post title. DATETIME
      */
+    @Column(nullable=false)
     private Date date;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(
+        cascade = CascadeType.MERGE,
+        fetch = FetchType.EAGER
+    )
     @JoinTable(
         name = "POSTS_HAVE_TAGS",
-        joinColumns = {
-            @JoinColumn(
-                name = "postId",
-                referencedColumnName = "id"
-            )
-        },
-        inverseJoinColumns = {
-            @JoinColumn(
-                name = "tagId",
-                referencedColumnName = "id"
-            )
-        }
+        joinColumns = { @JoinColumn(name = "postId", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "tagId", referencedColumnName = "id") }
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     @OneToMany(
         mappedBy = "post",
+        orphanRemoval = true,
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL
     )
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
 
 
@@ -150,6 +145,9 @@ public class Post {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+        /*for(Tag tag : tags) {
+            tag.getPosts().add(this);
+        }*/
     }
 
     public Set<Comment> getComments() {
@@ -158,5 +156,23 @@ public class Post {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public void addTag(Tag tag) {
+        // many-to-many => many-posts – many-tags
+        this.tags.add(tag);
+        tag.getPosts().add(this);
+    }
+
+    public void addTags(Set<Tag> tags) {
+        for(Tag tag : tags) {
+            this.addTag(tag);
+        }
+    }
+
+    public void addComment(Comment comment) {
+        // one-to-many => one-post – many-comments
+        this.comments.add(comment);
+        comment.setPost(this);
     }
 }

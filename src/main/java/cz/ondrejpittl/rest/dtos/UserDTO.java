@@ -48,6 +48,7 @@ public class UserDTO {
      */
     private String password;
 
+
     private Set<PostDTO> posts;
 
 

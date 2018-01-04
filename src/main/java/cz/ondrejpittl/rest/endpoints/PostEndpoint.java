@@ -38,4 +38,10 @@ public class PostEndpoint {
     public Response createPost(PostDTO post) {
         return Response.ok(postService.createPost(post)).build();
     }
+
+    @DELETE
+    @Path("/{id}")
+    public Response removePost(@PathParam("id") final Long id) {
+        return Response.ok(postService.removePost(id)).build();
+    }
 }

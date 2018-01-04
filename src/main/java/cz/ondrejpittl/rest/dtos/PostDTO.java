@@ -1,5 +1,8 @@
 package cz.ondrejpittl.rest.dtos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import cz.ondrejpittl.persistence.domain.Tag;
 
 import java.util.Date;
@@ -36,7 +39,7 @@ public class PostDTO {
     /**
      * Post title.
      */
-    private Date date;
+    private Date date = new Date();
 
     // set/array Stringů?
     private Set<TagDTO> tags;
@@ -126,5 +129,16 @@ public class PostDTO {
 
     public void setComments(Set<CommentDTO> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        try {
+            return ow.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

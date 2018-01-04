@@ -17,8 +17,7 @@ public class TagDTO {
 
     public TagDTO() {}
 
-    public TagDTO(Long id, String value) {
-        this.id = id;
+    public TagDTO(String value) {
         this.name = value;
     }
 

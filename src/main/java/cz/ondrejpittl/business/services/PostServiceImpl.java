@@ -33,6 +33,13 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     public Post createPost(PostDTO post) {
-        return postRepository.save(postMapper.fromDTO(post));
+        Post p = postMapper.fromDTO(post);
+        return postRepository.save(p);
+    }
+
+    @Transactional
+    public Post removePost(Long id) {
+
+        return null;
     }
 }

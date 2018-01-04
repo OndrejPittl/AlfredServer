@@ -1,5 +1,7 @@
 package cz.ondrejpittl.mappers;
 
+import cz.ondrejpittl.business.services.TagService;
+import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.persistence.domain.Comment;
 import cz.ondrejpittl.persistence.domain.Post;
 import cz.ondrejpittl.persistence.domain.Tag;
@@ -9,13 +11,11 @@ import cz.ondrejpittl.rest.dtos.CommentDTO;
 import cz.ondrejpittl.rest.dtos.PostDTO;
 import cz.ondrejpittl.rest.dtos.TagDTO;
 import cz.ondrejpittl.rest.dtos.UserDTO;
+import org.omg.IOP.TAG_RMI_CUSTOM_MAX_STREAM_FORMAT;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @ApplicationScoped
 public class PostRestMapper {
@@ -25,6 +25,9 @@ public class PostRestMapper {
 
     @Inject
     TagRestMapper tagMapper;
+
+    @Inject
+    TagService tagService;
 
     @Inject
     CommentRestMapper commentMapper;
@@ -69,12 +72,10 @@ public class PostRestMapper {
 
     public Post fromDTO(PostDTO dto) {
         Post post = new Post();
-        post.setId(dto.getId());
-        post.setUser(userRepository.findBy(dto.getUserId()));
-        post.setTitle(dto.getTitle());
-        post.setBody(dto.getBody());
-        post.setImage(dto.getImage());
-        post.setDate(dto.getDate());
+        if(dto.getTitle() != null)  post.setTitle(dto.getTitle());
+        if(dto.getBody() != null)   post.setBody(dto.getBody());
+        if(dto.getImage() != null)  post.setImage(dto.getImage());
+        if(dto.getDate() != null)   post.setDate(dto.getDate());
 
         if (dto.getTags() != null) {
             post.setTags(new HashSet<Tag>(){{
@@ -83,6 +84,15 @@ public class PostRestMapper {
                 }
             }});
         }
+
+        User user = userRepository.findBy(dto.getUserId());
+        user.addPost(post);
+
+        /*
+        Comment c1 = new Comment("abcd", new Date());
+        post.addComment(c1);
+        c1.setUser(user);
+        */
 
         return post;
     }

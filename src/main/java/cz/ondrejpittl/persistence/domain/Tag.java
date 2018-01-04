@@ -1,21 +1,14 @@
 package cz.ondrejpittl.persistence.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(
-    name = "TAGS" /*,
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "name")
-    }*/
-)
+@Table(name = "TAGS")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Tag {
 
@@ -24,15 +17,17 @@ public class Tag {
     @Column(updatable = false, nullable = false)
     private Long id;
 
+    @Column(nullable=false)
     private String name;
 
     //@Transient
     @ManyToMany(
         mappedBy = "tags",
         fetch = FetchType.EAGER,
-        cascade = {CascadeType.MERGE}
+        //cascade = {CascadeType.MERGE}
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
-    private Set<Post> posts;
+    private Set<Post> posts = new HashSet<>();
 
 
 

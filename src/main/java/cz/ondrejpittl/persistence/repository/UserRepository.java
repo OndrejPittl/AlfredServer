@@ -1,20 +1,30 @@
 package cz.ondrejpittl.persistence.repository;
 
 import cz.ondrejpittl.persistence.domain.User;
-import org.apache.deltaspike.data.api.EntityRepository;
-import org.apache.deltaspike.data.api.FirstResult;
-import org.apache.deltaspike.data.api.MaxResults;
-import org.apache.deltaspike.data.api.Repository;
+import org.apache.deltaspike.data.api.*;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.NamedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 
-@Repository
+
+
+@Repository(forEntity = User.class)
 public interface UserRepository extends EntityRepository<User, Long> {
+
+    List<User> findByDisabledEqualOrderByFirstNameAsc(boolean disabled);
 
     User findFirst1BySlugLike(String slug);
 
     User removeById(Long id);
+
+    @Query("select count(u) from User u where u.slug like :slug")
+    Long countUsersBySlug(@QueryParam("slug") String slug);
+
+    @Query("select count(u) from User u where u.email like :mail and u.password like :pwd")
+    Long countUsers(@QueryParam("mail") String email, @QueryParam("pwd") String password);
+
+
 
 }

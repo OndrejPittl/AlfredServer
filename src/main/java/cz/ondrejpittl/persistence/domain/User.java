@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,16 +23,19 @@ public class User {
     /**
      * First name. VARCHAR(255)
      */
+    @Column(nullable = false)
     private String firstName;
 
     /**
      * Last name. VARCHAR(255)
      */
+    @Column(nullable = false)
     private String lastName;
 
     /**
      * E-mail. VARCHAR(255)
      */
+    @Column(nullable = false)
     private String email;
 
     /**
@@ -49,31 +53,36 @@ public class User {
     /**
      * URL profile slug. VARCHAR(255)
      */
+    @Column(nullable = false)
     private String slug;
 
     /**
-     * Password. CHAR(32) – MD5 produces 32 B hash
+     * Password.
      */
-    @Column(columnDefinition = "CHAR(32)")
     private String password;
+
+    @Column(nullable=false, columnDefinition="boolean default false")
+    private boolean disabled;
 
     /**
      * User's posts.
      */
     @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
+        mappedBy = "user",
+        orphanRemoval = true,
+        fetch = FetchType.EAGER,
+        cascade = { CascadeType.MERGE }
     )
-    private Set<Post> posts;
+    private Set<Post> posts = new HashSet<Post>();
 
 
     @OneToMany(
         mappedBy = "user",
+        orphanRemoval = true,
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL
     )
-    private Set<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
 
 
@@ -94,6 +103,7 @@ public class User {
         this.photo = photo;
         this.slug = slug;
         this.password = password;
+        this.disabled = false;
     }
 
     public Set<Post> getPosts() {
@@ -168,11 +178,33 @@ public class User {
         this.password = password;
     }
 
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
     public Set<Comment> getComments() {
         return comments;
     }
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public void addPost(Post post) {
+        // post –> set
+        // user –> post
+        // ===> consistency
+        this.posts.add(post);
+        post.setUser(this);
+    }
+
+    public void addPosts(Set<Post> posts) {
+        for(Post post : posts) {
+            this.addPost(post);
+        }
     }
 }
