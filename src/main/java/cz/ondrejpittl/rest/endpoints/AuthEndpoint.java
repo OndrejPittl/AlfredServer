@@ -34,14 +34,21 @@ public class AuthEndpoint {
 
     @POST
     public Response authenticate(UserDTO user) {
-        User u = userMapper.fromDTO(user);
+        String mail = user.getEmail(),
+               pwd = user.getPassword();
 
         // if user exists / correct credentials given
-        if(this.userService.checkUserCredentials(u)) {
-            return Response.ok(this.authService.registerUser(u)).build();
+        if(this.authService.checkUserCredentials(mail, pwd)) {
+            TokenDTO token = this.authService.registerUser(mail);
+            return Response.ok(token).build();
         }
 
         return Response.ok(new TokenDTO(null)).build();
     }
+
+
+
+
+
 
 }

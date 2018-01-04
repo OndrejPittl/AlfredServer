@@ -9,22 +9,26 @@ public interface UserService {
 
 
     // @TODO: ---- development-only:
-    public boolean init();
+    boolean init();
 
 
     // -----------------------------
 
-    public List<User> getAllUsers();
+    List<User> getAllUsers();
 
-    public List<User> getAllActiveUsers();
+    List<User> getAllActiveUsers();
 
-    public User getUser(Long id);
+    User getUser(Long id);
 
-    public User getUser(String slug);
+    User getUser(String slug);
 
-    public User createUser(UserDTO user);
+    User getUserByEmail(String email);
 
-    public User disableUser(Long id);
+    User createUser(UserDTO user);
 
-    public boolean checkUserCredentials(User user);
+    User disableUser(Long id);
+
+    User modifyUser(UserDTO user);
+
+    boolean checkUserExists(String email, String hashedPwd);
 }

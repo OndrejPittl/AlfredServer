@@ -6,10 +6,12 @@ import cz.ondrejpittl.rest.dtos.TokenDTO;
 
 public interface AuthService {
 
-    //String generateToken();
+    TokenDTO registerUser(String email);
 
-    TokenDTO registerUser(User user);
+    //boolean authenticate(User user, String token);
 
-    boolean authenticate(User user, String token);
+    User authenticate(String token);
+
+    boolean checkUserCredentials(String mail, String pwd);
 
 }

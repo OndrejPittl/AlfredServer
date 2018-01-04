@@ -1,5 +1,6 @@
 package cz.ondrejpittl.business.services;
 
+import cz.ondrejpittl.business.annotations.AuthenticatedUser;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.*;
@@ -20,6 +21,10 @@ import java.util.*;
 
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
+
+    @Inject
+    @AuthenticatedUser
+    User authenticatedUser;
 
     @Inject
     UserRepository userRepository;
@@ -169,6 +174,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findFirst1BySlugLike(slug);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmailLike(email);
+    }
 
     @Transactional
     public User createUser(UserDTO user) {
@@ -226,7 +234,36 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.save(u);
     }
 
-    public boolean checkUserCredentials(User user) {
-        return this.userRepository.countUsers(user.getEmail(), user.getPassword()) == 1;
+    @Transactional
+    public User modifyUser(UserDTO user) {
+        Dev.print("Modifying use with ID: " + this.authenticatedUser.getId());
+
+        User u = this.getUser(this.authenticatedUser.getId());
+
+        // optional
+        if(user.getPassword() != null) {
+            u.setPassword(Encryptor.bcrypt(user.getPassword()));
+        }
+
+        // required –> always set
+        u.setFirstName(user.getFirstName());
+        u.setLastName(user.getLastName());
+        u.setEmail(user.getEmail());
+
+        // optional
+        if(user.getPhoto() != null) {
+            u.setPhoto(user.getPhoto());
+        }
+
+        this.userRepository.save(u);
+        return u;
+    }
+
+    public boolean checkUserExists(String email, String hashedPwd) {
+        Long count = this.userRepository.countUsers(email, hashedPwd);
+
+        Dev.print(count);
+
+        return count == 1;
     }
 }
