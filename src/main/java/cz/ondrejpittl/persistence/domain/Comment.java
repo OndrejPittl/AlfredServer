@@ -20,7 +20,7 @@ public class Comment {
     private String body;
 
     @Column(nullable=false)
-    private Date date;
+    private Date date = new Date();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)

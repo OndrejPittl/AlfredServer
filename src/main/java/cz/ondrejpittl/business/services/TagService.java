@@ -6,14 +6,17 @@ import cz.ondrejpittl.rest.dtos.PostDTO;
 import cz.ondrejpittl.rest.dtos.TagDTO;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TagService {
 
-    public List<Tag> getAllTags();
+    List<Tag> getAllTags();
 
-    public Tag getTag(Long id);
+    Tag getTag(Long id);
 
-    public Tag createTag(TagDTO tag);
+    Tag createTag(TagDTO tag);
 
-    public Tag getOrCreateTag(String tag);
+    Tag getOrCreateTag(String tag);
+
+    int removeOrphans(Set<Tag> tags);
 }

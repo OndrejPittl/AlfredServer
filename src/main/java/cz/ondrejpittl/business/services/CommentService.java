@@ -9,10 +9,13 @@ import java.util.List;
 
 public interface CommentService {
 
-    public List<Comment> getAllComments();
+    List<Comment> getAllComments();
 
-    public Comment getComment(Long id);
+    //List<Comment> getAllPostComments(Long postId);
 
-    public Comment createComment(CommentDTO comment);
+    Comment getComment(Long id);
 
+    Comment createComment(Long postId, CommentDTO comment);
+
+    Comment removeComment(Long commentId);
 }

@@ -8,12 +8,13 @@ import cz.ondrejpittl.rest.dtos.CommentDTO;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 @Path("/comments")
-@Produces("application/json")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class CommentEndpoint {
 
     @Inject
@@ -22,6 +23,15 @@ public class CommentEndpoint {
     @Inject
     private CommentRestMapper commentRestMapper;
 
+
+
+
+    // --------------- GET ----------------
+
+    /**
+     * Get all comments.
+     * @return  DTO response
+     */
     @GET
     public Response getAllComments() {
         return Response.ok(commentRestMapper.toDTOs(commentService.getAllComments())).build();
@@ -35,6 +45,11 @@ public class CommentEndpoint {
 
     @POST
     public Response createComment(CommentDTO comment) {
-        return Response.ok(commentService.createComment(comment)).build();
+        //return Response.ok(commentService.createComment(comment)).build();
+        return null;
     }
+
+    // DELETE   /comments/id
+    // POST     /comments/post/id
+    //
 }

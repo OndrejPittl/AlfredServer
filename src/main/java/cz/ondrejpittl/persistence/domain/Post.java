@@ -2,9 +2,13 @@ package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import cz.ondrejpittl.dev.Dev;
+import javafx.geometry.Pos;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -52,7 +56,7 @@ public class Post {
     private Date date;
 
     @ManyToMany(
-        cascade = CascadeType.MERGE,
+        //cascade = {CascadeType.PERSIST/*, CascadeType.REMOVE*/},
         fetch = FetchType.EAGER
     )
     @JoinTable(
@@ -62,6 +66,8 @@ public class Post {
     )
     private Set<Tag> tags = new HashSet<>();
 
+
+
     @OneToMany(
         mappedBy = "post",
         orphanRemoval = true,
@@ -69,7 +75,6 @@ public class Post {
         cascade = CascadeType.ALL
     )
     private Set<Comment> comments = new HashSet<>();
-
 
 
     public Post() { }
@@ -161,7 +166,7 @@ public class Post {
     public void addTag(Tag tag) {
         // many-to-many => many-posts – many-tags
         this.tags.add(tag);
-        tag.getPosts().add(this);
+        //tag.getPosts().add(this);
     }
 
     public void addTags(Set<Tag> tags) {
@@ -170,9 +175,50 @@ public class Post {
         }
     }
 
+    public Tag removeTag(Tag tag) {
+        this.tags.remove(tag);
+        //tag.getPosts().remove(this);
+
+
+        /*
+        Set<Post> p = tag.getPosts();
+        p.remove(this);
+        tag.setPosts(p);
+        */
+
+        return tag;
+    }
+
+
     public void addComment(Comment comment) {
         // one-to-many => one-post – many-comments
         this.comments.add(comment);
-        comment.setPost(this);
+        //comment.setPost(this);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof Post)) return false;
+
+        Post post = (Post) obj;
+
+        if(!post.getId().equals(this.id)) {
+            return false;
+        }
+
+        /*
+        if(post.getTitle() != this.title) return false;
+        if(post.getBody() != this.body) return false;
+        */
+
+        return true;
+    }
+
+    /*
+    @Override
+    public int hashCode() {
+        return ("" + (this.id ? this.id.hashCode() : "") + this.title.hashCode() + this.body.hashCode()).hashCode();
+    }
+    */
 }

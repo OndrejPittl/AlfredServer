@@ -39,11 +39,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public User authenticate(String token) {
+
+
         if(this.sessionUsers.containsKey(token)) {
             Identity identity = this.sessionUsers.get(token);
             User user = this.userService.getUser(identity.getUserId());
             return user;
         }
+
         return null;
     }
 
@@ -89,4 +92,11 @@ public class AuthServiceImpl implements AuthService {
         return Encryptor.verify(pwd, hashedPwd);
     }
 
+    public Identity getIdentity(String token) {
+        if(!this.sessionUsers.containsKey(token)) {
+            return null;
+        }
+
+        return this.sessionUsers.get(token);
+    }
 }

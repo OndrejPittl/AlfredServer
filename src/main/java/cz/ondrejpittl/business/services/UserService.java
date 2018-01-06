@@ -26,6 +26,8 @@ public interface UserService {
 
     User createUser(UserDTO user);
 
+    User disableCurrentUser();
+
     User disableUser(Long id);
 
     User modifyUser(UserDTO user);

@@ -4,16 +4,11 @@ import cz.ondrejpittl.business.annotations.AuthenticatedUser;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.*;
-import cz.ondrejpittl.persistence.repository.PostRepository;
-import cz.ondrejpittl.persistence.repository.TagRepository;
 import cz.ondrejpittl.persistence.repository.UserRepository;
 import cz.ondrejpittl.rest.dtos.UserDTO;
 import cz.ondrejpittl.utils.Encryptor;
 import cz.ondrejpittl.utils.StringUtils;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -24,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Inject
     @AuthenticatedUser
-    User authenticatedUser;
+    Identity authenticatedUser;
 
     @Inject
     UserRepository userRepository;
@@ -227,6 +222,11 @@ public class UserServiceImpl implements UserService {
         return candidate;
     }
 
+    public User disableCurrentUser() {
+        Long id = this.authenticatedUser.getUserId();
+        return this.disableUser(id);
+    }
+
     @Transactional
     public User disableUser(Long id) {
         User u = this.getUser(id);
@@ -236,9 +236,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public User modifyUser(UserDTO user) {
-        Dev.print("Modifying use with ID: " + this.authenticatedUser.getId());
+        Long uID = this.authenticatedUser.getUserId();
 
-        User u = this.getUser(this.authenticatedUser.getId());
+        Dev.print("Modifying use with ID: " + uID);
+
+        User u = this.getUser(uID);
 
         // optional
         if(user.getPassword() != null) {

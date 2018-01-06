@@ -7,4 +7,6 @@ import org.apache.deltaspike.data.api.Repository;
 @Repository
 public interface CommentRepository extends EntityRepository<Comment, Long> {
 
+    Integer removeById(Long id);
+
 }

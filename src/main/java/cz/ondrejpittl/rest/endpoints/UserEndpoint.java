@@ -90,7 +90,6 @@ public class UserEndpoint {
     @Secured
     public Response modifyUser(UserDTO user) {
         return Response.ok(this.userRestMapper.toDTO(userService.modifyUser(user))).build();
-        //return Response.ok(new TokenDTO("OK!")).build();
     }
 
 
@@ -98,16 +97,19 @@ public class UserEndpoint {
     // -------------- DELETE --------------
 
     /**
-     * Removes / disables a user.
-     * @param id    id of a user given via URL
+     * Removes / disables the currently logged user.
      * @return      DTO response
      */
     @DELETE
     @Secured
-    @Path("/{id}")
-    public Response removeUser(@PathParam("id") final Long id) {
-        return Response.ok(userService.disableUser(id)).build();
+    //@Path("/{id}") public Response removeUser(@PathParam("id") final Long id) {
+    public Response removeUser() {
+        return Response.ok(userService.disableCurrentUser()).build();
     }
+
+
+
+
 
 
 

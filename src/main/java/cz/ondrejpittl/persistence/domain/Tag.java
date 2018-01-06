@@ -23,9 +23,9 @@ public class Tag {
     //@Transient
     @ManyToMany(
         mappedBy = "tags",
-        fetch = FetchType.EAGER,
+        fetch = FetchType.EAGER
         //cascade = {CascadeType.MERGE}
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+        //cascade = {CascadeType.PERSIST}
     )
     private Set<Post> posts = new HashSet<>();
 

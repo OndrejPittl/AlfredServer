@@ -1,5 +1,6 @@
 package cz.ondrejpittl.rest.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import cz.ondrejpittl.persistence.domain.Post;
@@ -15,6 +16,7 @@ public class CommentDTO {
 
     private String body;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date date;
 
     private Long userId;

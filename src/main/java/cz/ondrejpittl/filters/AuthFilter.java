@@ -53,7 +53,7 @@ public class AuthFilter implements ContainerRequestFilter {
             validateToken(token);
 
             // --- user auth succeeded ---
-            this.userAuthenticatedEvent.fire(authService.authenticate(token).getSlug());
+            this.userAuthenticatedEvent.fire(token);
 
         } catch (Exception e) {
             abortUnauthorized(reqContext);

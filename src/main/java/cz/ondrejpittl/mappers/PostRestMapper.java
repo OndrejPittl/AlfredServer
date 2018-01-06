@@ -59,6 +59,7 @@ public class PostRestMapper {
             }});
         }
 
+        /*
         if (post.getComments() != null) {
             dto.setComments(new HashSet<CommentDTO>(){{
                 for (Comment comment : post.getComments()) {
@@ -66,6 +67,7 @@ public class PostRestMapper {
                 }
             }});
         }
+        */
 
         return dto;
     }
@@ -85,8 +87,11 @@ public class PostRestMapper {
             }});
         }
 
-        User user = userRepository.findBy(dto.getUserId());
-        user.addPost(post);
+        if(dto.getUserId() != null) {
+            User user = userRepository.findBy(dto.getUserId());
+            user.addPost(post);
+        }
+
 
         /*
         Comment c1 = new Comment("abcd", new Date());

@@ -1,20 +1,13 @@
 package cz.ondrejpittl.mappers;
 
 import cz.ondrejpittl.business.services.TagService;
-import cz.ondrejpittl.persistence.domain.Post;
-import cz.ondrejpittl.persistence.domain.Tag;
 import cz.ondrejpittl.persistence.domain.Tag;
 import cz.ondrejpittl.persistence.repository.TagRepository;
-import cz.ondrejpittl.persistence.repository.UserRepository;
-import cz.ondrejpittl.rest.dtos.PostDTO;
-import cz.ondrejpittl.rest.dtos.TagDTO;
 import cz.ondrejpittl.rest.dtos.TagDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.sun.tools.internal.xjc.reader.Ring.add;

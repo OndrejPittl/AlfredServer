@@ -11,6 +11,8 @@ public class Identity {
     private Date tokenExpiration;
 
 
+    public Identity() { }
+
     public Identity(Long userId, String token, Date tokenExpiration) {
         this.userId = userId;
         this.token = token;

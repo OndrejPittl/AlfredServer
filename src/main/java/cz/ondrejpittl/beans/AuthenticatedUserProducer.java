@@ -1,7 +1,9 @@
 package cz.ondrejpittl.beans;
 
 import cz.ondrejpittl.business.annotations.AuthenticatedUser;
+import cz.ondrejpittl.business.services.AuthService;
 import cz.ondrejpittl.business.services.UserService;
+import cz.ondrejpittl.persistence.domain.Identity;
 import cz.ondrejpittl.persistence.domain.User;
 
 import javax.enterprise.context.RequestScoped;
@@ -15,16 +17,16 @@ public class AuthenticatedUserProducer {
     @Produces
     @RequestScoped
     @AuthenticatedUser
-    private User authenticatedUser;
+    private Identity authenticatedUser;
 
     @Inject
-    private UserService userService;
+    private AuthService authService;
 
-    public void handleAuthenticationEvent(@Observes @AuthenticatedUser String username) {
-        this.authenticatedUser = findUser(username);
+    public void handleAuthenticationEvent(@Observes @AuthenticatedUser String token) {
+        this.authenticatedUser = findUser(token);
     }
 
-    private User findUser(String slug) {
-        return this.userService.getUser(slug);
+    private Identity findUser(String token) {
+        return this.authService.getIdentity(token);
     }
 }
