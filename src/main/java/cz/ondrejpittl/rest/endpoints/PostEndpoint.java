@@ -92,20 +92,6 @@ public class PostEndpoint {
     }
 
 
-    /**
-     * Creates a new comment of the specific post of ID given via URL.
-     * @param id        ID of the post
-     * @param comment   CommentDTO (json) transferred in body.
-     * @return          DTO response
-     */
-    @POST
-    @Secured
-    @Path("/{id}/comments")
-    public Response createComment(@PathParam("id") final Long id, CommentDTO comment) {
-        return Response.ok(commentService.createComment(id, comment)).build();
-    }
-
-
 
 
     // --------------- PUT ---------------
@@ -130,20 +116,6 @@ public class PostEndpoint {
     @Secured
     @Path("/{id}")
     public Response removePost(@PathParam("id") final Long id) {
-        postService.removePost(id);
-        return Response.ok(new TokenDTO(null)).build();
-    }
-
-    /**
-     * Removes the specific comment of ID given via URL.
-     * @param postId        ID of the post
-     * @param commentId     ID of the comment
-     * @return              DTO response
-     */
-    @DELETE
-    @Secured
-    @Path("/{postId}/comments/{commentId}")
-    public Response removeComment(@PathParam("postId") final Long postId, @PathParam("commentId") final Long commentId) {
-        return Response.ok(commentService.removeComment(commentId)).build();
+        return Response.ok(postService.removePost(id)).build();
     }
 }

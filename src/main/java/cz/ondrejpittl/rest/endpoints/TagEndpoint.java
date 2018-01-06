@@ -2,7 +2,6 @@ package cz.ondrejpittl.rest.endpoints;
 
 import cz.ondrejpittl.business.services.TagService;
 import cz.ondrejpittl.mappers.TagRestMapper;
-import cz.ondrejpittl.rest.dtos.TagDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,11 +30,5 @@ public class TagEndpoint {
     @Path("/{id}")
     public Response getTag(@PathParam("id") final Long id) {
         return Response.ok(tagRestMapper.toDTO(tagService.getTag(id))).build();
-    }
-
-
-    @POST
-    public Response createTag(TagDTO tag) {
-        return Response.ok(tagService.createTag(tag)).build();
     }
 }

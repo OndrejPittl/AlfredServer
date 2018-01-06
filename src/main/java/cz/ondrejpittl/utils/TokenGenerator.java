@@ -10,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import cz.ondrejpittl.persistence.domain.User;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 public class TokenGenerator {
 
@@ -20,6 +21,8 @@ public class TokenGenerator {
         try {
             String identity = TokenGenerator.buildIdentity(user);
             return JWT.create()
+                    .withSubject(String.valueOf(user.getId()))
+                    .withIssuedAt(new Date(System.currentTimeMillis()))
                     .withIssuer("auth0")
                     .sign(Algorithm.HMAC256(identity));
         } catch (UnsupportedEncodingException | JWTCreationException exception){
@@ -30,18 +33,18 @@ public class TokenGenerator {
 
     public static boolean verifyToken(String token, User user) {
         try {
+
             String identity = TokenGenerator.buildIdentity(user);
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(identity))
                     .withIssuer("auth0")
+                    .withSubject(String.valueOf(user.getId()))
                     .build();
             return verifier.verify(token) != null; // asi
-        } catch (UnsupportedEncodingException exception){
-            //UTF-8 encoding not supported
-        } catch (JWTVerificationException exception){
-            //Invalid signature/claims
-        }
 
-        return false;
+        } catch (UnsupportedEncodingException | JWTVerificationException exception){
+            //UTF-8 encoding not supported
+            return false;
+        }
     }
 
     private static String buildIdentity(User user) {

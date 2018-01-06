@@ -19,4 +19,6 @@ public interface TagService {
     Tag getOrCreateTag(String tag);
 
     int removeOrphans(Set<Tag> tags);
+
+    int removeOrphans();
 }

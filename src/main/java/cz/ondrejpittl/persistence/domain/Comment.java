@@ -22,6 +22,12 @@ public class Comment {
     @Column(nullable=false)
     private Date date = new Date();
 
+    /**
+     * Comment last modification. DATETIME
+     */
+    private Date lastModified;
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
@@ -82,5 +88,13 @@ public class Comment {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }

@@ -37,11 +37,15 @@ public class PostDTO {
     private String image;
 
     /**
-     * Post title.
+     * Post date.
      */
     private Date date = new Date();
 
-    // set/array Stringů?
+    /**
+     * Post last modification.
+     */
+    private Date lastModified;
+
     private Set<TagDTO> tags;
 
     private Set<CommentDTO> comments;
@@ -113,6 +117,14 @@ public class PostDTO {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 
     public Set<TagDTO> getTags() {

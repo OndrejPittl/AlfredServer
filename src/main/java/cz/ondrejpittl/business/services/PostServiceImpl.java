@@ -13,10 +13,7 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ApplicationScoped
 public class PostServiceImpl implements PostService {
@@ -53,6 +50,7 @@ public class PostServiceImpl implements PostService {
 
         this.postRepository.removeById(id);
         this.tagService.removeOrphans(tags);
+        //this.tagService.removeOrphans();
         return null;
     }
 
@@ -66,6 +64,10 @@ public class PostServiceImpl implements PostService {
         Post orig = this.getPost(id);
         Dev.print("POST PUT: Modifying Post ID " + id);
 
+
+        if(orig == null) {
+            return null;
+        }
 
         if(!p.getTitle().equals(orig.getTitle())) {
             orig.setTitle(p.getTitle());
@@ -82,41 +84,34 @@ public class PostServiceImpl implements PostService {
             modified = true;
         }
 
-        /*
         if(p.getTags() != null) {
             prevTags = new HashSet<>(orig.getTags());
-            Set<Tag> toAdd = null;
-            Set<Tag> toRemove = null;
 
-            toRemove = new HashSet<>(prevTags);
-            toRemove.removeAll(p.getTags());
+            orig.setTags(new HashSet<Tag>() {{
+                Iterator<Tag> it = p.getTags().iterator();
+                while(it.hasNext()) {
+                    Tag t = tagService.getOrCreateTag(it.next().getName());
+                    add(t);
+                }
+            }});
 
-            toAdd = new HashSet<>(p.getTags());
-            toAdd.removeAll(prevTags);
-
-            Iterator<Tag> it = toRemove.iterator();
-            while(it.hasNext()) {
-                Tag t = it.next();
-                Dev.print("Removing " + t.getName());
-                orig.removeTag(t);
-            }
-
-            it = toAdd.iterator();
-            while(it.hasNext()) {
-                Tag t = it.next();
-                Dev.print("Adding " + t.getName() + " (" + t.getId() + ")");
-                orig.addTag(t);
-            }
+            modified = true;
         }
-        */
 
 
         if(modified) {
             // modification –> update date
-            orig.setDate(dto.getDate());
+            orig.setLastModified(new Date(System.currentTimeMillis()));
         }
 
         this.postRepository.saveAndFlush(orig);
+
+
+        if(prevTags != null) {
+            this.tagService.removeOrphans(prevTags);
+        }
+
+
 
         return orig;
     }

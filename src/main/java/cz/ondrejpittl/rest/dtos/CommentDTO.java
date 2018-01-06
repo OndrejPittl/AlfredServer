@@ -19,6 +19,9 @@ public class CommentDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date date;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date lastModified;
+
     private Long userId;
 
     private Long postId;
@@ -58,6 +61,14 @@ public class CommentDTO {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 
     public Long getUserId() {

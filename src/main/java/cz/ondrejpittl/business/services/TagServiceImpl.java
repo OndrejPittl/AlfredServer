@@ -10,6 +10,7 @@ import cz.ondrejpittl.rest.dtos.TagDTO;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +61,8 @@ public class TagServiceImpl implements TagService {
             Tag t = this.tagRepository.findBy(it.next().getId());
             boolean isOrphan = t.getPosts().size() <= 0;
 
+            Dev.printObject(t)  ;
+
             Dev.print("checking " + t.getName());
 
             // not an orphan –> skip
@@ -71,6 +74,18 @@ public class TagServiceImpl implements TagService {
         }
 
         return removedCount;
+    }
+
+    public int removeOrphans() {
+        Dev.print("Checking Tag orphans.");
+
+        List<Tag> tags = this.tagRepository.findAll();
+
+        if(tags == null) {
+            return 0;
+        }
+
+        return this.removeOrphans(new HashSet<>(tags));
     }
 
 }

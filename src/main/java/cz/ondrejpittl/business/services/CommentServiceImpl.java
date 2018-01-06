@@ -10,6 +10,7 @@ import cz.ondrejpittl.rest.dtos.CommentDTO;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -54,6 +55,24 @@ public class CommentServiceImpl implements CommentService {
         c.setPost(p);
 
         return commentRepository.save(c);
+    }
+
+    @Transactional
+    public Comment modifyComment(Long id, CommentDTO dto) {
+        Comment comment = commentRepository.findBy(id);
+        Comment c = commentMapper.fromDTO(dto);
+        boolean modified = false;
+
+        if(c.getBody() != comment.getBody()) {
+            comment.setBody(c.getBody());
+            modified = true;
+        }
+
+        if(modified) {
+            comment.setLastModified(new Date());
+        }
+
+        return this.commentRepository.save(comment);
     }
 
     @Transactional

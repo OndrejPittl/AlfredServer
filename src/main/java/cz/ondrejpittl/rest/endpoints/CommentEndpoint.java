@@ -1,9 +1,12 @@
 package cz.ondrejpittl.rest.endpoints;
 
+import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.CommentService;
+import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.rest.dtos.CommentDTO;
+import cz.ondrejpittl.rest.dtos.PostDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -39,17 +42,62 @@ public class CommentEndpoint {
 
     @GET
     @Path("/{id}")
-    public Response getUser(@PathParam("id") final Long id) {
+    public Response getComment(@PathParam("id") final Long id) {
         return Response.ok(commentRestMapper.toDTO(commentService.getComment(id))).build();
     }
 
+
+
+
+    // -------------- POST ----------------
+
+    /**
+     * // HTTP POST   /comments/post/id
+     *
+     *
+     * @param postId
+     * @param comment
+     * @return
+     */
     @POST
-    public Response createComment(CommentDTO comment) {
-        //return Response.ok(commentService.createComment(comment)).build();
-        return null;
+    @Secured
+    @Path("/post/{postId}")
+    public Response createComment(@PathParam("postId") final Long postId, CommentDTO comment) {
+        Dev.print("COMMENT POST: Endpoint reached.");
+        return Response.ok(commentService.createComment(postId, comment)).build();
     }
 
-    // DELETE   /comments/id
-    // POST     /comments/post/id
-    //
+
+    // --------------- PUT ---------------
+
+    @PUT
+    @Secured
+    @Path("/{id}")
+    public Response modifyComment(@PathParam("id") final Long id, CommentDTO comment) {
+        Dev.print("COMMENT PUT: Endpoint reached.");
+        return Response.ok(commentService.modifyComment(id, comment)).build();
+    }
+
+
+    // ------------- DELETE ---------------
+
+    /**
+     * //  HTTP DELETE   /comments/id
+     *
+     * Removes the specific comment of ID given via URL.
+     * @param id     ID of the comment
+     * @return       DTO response
+     */
+    @DELETE
+    @Secured
+    @Path("/{id}")
+    public Response removeComment(@PathParam("id") final Long id) {
+        Dev.print("COMMENT DELETE: Endpoint reached.");
+        return Response.ok(commentService.removeComment(id)).build();
+    }
+
+
+
+
+
 }

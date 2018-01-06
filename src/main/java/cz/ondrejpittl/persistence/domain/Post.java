@@ -50,10 +50,15 @@ public class Post {
     private String image;
 
     /**
-     * Post title. DATETIME
+     * Post date. DATETIME
      */
     @Column(nullable=false)
     private Date date;
+
+    /**
+     * Post last modification. DATETIME
+     */
+    private Date lastModified;
 
     @ManyToMany(
         //cascade = {CascadeType.PERSIST/*, CascadeType.REMOVE*/},
@@ -142,6 +147,14 @@ public class Post {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 
     public Set<Tag> getTags() {

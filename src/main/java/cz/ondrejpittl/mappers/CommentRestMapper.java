@@ -41,6 +41,7 @@ public class CommentRestMapper {
         dto.setId(comment.getId());
         dto.setBody(comment.getBody());
         dto.setDate(comment.getDate());
+        dto.setLastModified(comment.getLastModified());
         dto.setUserId(comment.getUser().getId());
         dto.setPostId(comment.getPost().getId());
         return dto;
@@ -51,6 +52,7 @@ public class CommentRestMapper {
         comment.setId(dto.getId());
         comment.setBody(dto.getBody());
         comment.setDate(dto.getDate());
+        comment.setLastModified(dto.getLastModified());
         //comment.setUser(userRepository.findBy(dto.getUserId()));
         //comment.setPost(postRepository.findBy(dto.getPostId()));
         return comment;

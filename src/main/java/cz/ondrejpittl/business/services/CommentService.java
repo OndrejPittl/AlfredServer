@@ -18,4 +18,6 @@ public interface CommentService {
     Comment createComment(Long postId, CommentDTO comment);
 
     Comment removeComment(Long commentId);
+
+    Comment modifyComment(Long id, CommentDTO dto);
 }
