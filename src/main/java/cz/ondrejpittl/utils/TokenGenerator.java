@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.persistence.domain.User;
 
 import java.io.UnsupportedEncodingException;
@@ -18,6 +19,8 @@ public class TokenGenerator {
 
 
     public static String generateToken(User user) {
+        if(Dev.MOCK_TOKEN_MODE) return "aaa";
+
         try {
             String identity = TokenGenerator.buildIdentity(user);
             return JWT.create()
@@ -37,7 +40,7 @@ public class TokenGenerator {
             String identity = TokenGenerator.buildIdentity(user);
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(identity))
                     .withIssuer("auth0")
-                    .withSubject(String.valueOf(user.getId()))
+
                     .build();
             return verifier.verify(token) != null; // asi
 

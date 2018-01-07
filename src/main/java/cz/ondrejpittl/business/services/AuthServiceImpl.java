@@ -39,8 +39,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public User authenticate(String token) {
-
-
         if(this.sessionUsers.containsKey(token)) {
             Identity identity = this.sessionUsers.get(token);
             User user = this.userService.getUser(identity.getUserId());

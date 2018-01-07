@@ -12,7 +12,8 @@ public interface UserRepository extends EntityRepository<User, Long> {
 
     List<User> findByDisabledEqualOrderByFirstNameAsc(boolean disabled);
 
-    User findFirst1BySlugLike(String slug);
+    @Query(value = "select u from User u where u.slug like :slug", max = 1, singleResult = SingleResultType.OPTIONAL)
+    User findBySlug(@QueryParam("slug") String slug);
 
     @Query(max = 1, singleResult = SingleResultType.OPTIONAL)
     User findByEmailLike(String email);

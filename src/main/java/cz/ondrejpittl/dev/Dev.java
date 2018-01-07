@@ -7,6 +7,10 @@ public class Dev {
 
     private static final String PREFIX = "-----> ";
 
+    public static final boolean MOCK_TOKEN_MODE = false;
+
+
+
     public static void print(String msg) {
         System.out.println(Dev.PREFIX + msg);
     }

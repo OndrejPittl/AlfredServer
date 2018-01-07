@@ -1,5 +1,7 @@
 package cz.ondrejpittl.business.services;
 
+import cz.ondrejpittl.persistence.domain.Friendship;
+import cz.ondrejpittl.persistence.domain.Identity;
 import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.UserDTO;
 
@@ -24,7 +26,7 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    User createUser(UserDTO user);
+    User createUser(UserDTO dto);
 
     User disableCurrentUser();
 
@@ -33,4 +35,6 @@ public interface UserService {
     User modifyUser(UserDTO user);
 
     boolean checkUserExists(String email, String hashedPwd);
+
+    User getAuthenticatedUser();
 }

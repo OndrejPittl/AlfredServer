@@ -58,7 +58,6 @@ public class UserDTO {
     }
 
     public UserDTO(
-            Long id,
             String firstName,
             String lastName,
             String email,
@@ -66,7 +65,6 @@ public class UserDTO {
             String photo,
             String slug,
             String password) {
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

@@ -33,6 +33,9 @@ public class UserServiceImpl implements UserService {
     @Inject
     AuthService authService;
 
+    @Inject
+    FriendshipService friendshipService;
+
 
 
     // @TODO: ---- development-only:
@@ -166,7 +169,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getUser(String slug) {
-        return userRepository.findFirst1BySlugLike(slug);
+        return userRepository.findBySlug(slug);
     }
 
     public User getUserByEmail(String email) {
@@ -174,40 +177,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public User createUser(UserDTO user) {
-        User u = userMapper.fromDTO(user);
+    public User createUser(UserDTO dto) {
+        User user = userMapper.fromDTO(dto);
 
-        u.setSlug(this.buildUserSlug(u));
-        u.setPassword(Encryptor.bcrypt(u.getPassword()));
-
+        user.setSlug(this.buildUserSlug(user));
+        user.setPassword(Encryptor.bcrypt(user.getPassword()));
 
         /*
-        Tag t = tagService.getOrCreateTag("druhyTag");
+        User friend = userMapper.fromDTO(
+            new UserDTO("Halina",
+                    "Pawlowska",
+                    "ultimatni@halina.com",
+                    Sex.FEMALE, null,
+                    null,
+                    "kozyjakovozy")
+        );
 
-        u.setPosts(new HashSet<Post>(){{
-            Post p1 = new Post("post1_title", "post1_body", "post1_img-path", new Date(), u, new HashSet<Tag>(){{
-                add(tagService.getOrCreateTag("prvniTag"));
-                add(t);
-            }});
+        friend.setSlug(this.buildUserSlug(friend));
+        friend.setPassword(Encryptor.bcrypt(friend.getPassword()));
 
-            Post p2 = new Post("post2_title", "post2_body", "post2_img-path", new Date(), u, new HashSet<Tag>(){{
-                add(t);
-                add(tagService.getOrCreateTag("tretiTag"));
-            }});
+        userRepository.saveAndFlush(friend);
+        userRepository.saveAndFlush(user);
 
-            p1.setComments(new HashSet<Comment>(){{
-                add(new Comment("Velice přínosný příspěvek.", new Date(), u, p1));
-                add(new Comment("Další velice přínosný příspěvek.", new Date(), u, p1));
-                add(new Comment("Jsi blbec.", new Date(), u, p2));
-            }});
+        Dev.printObject(user);
+        Dev.printObject(friend);
 
-            add(p1);
-            add(p2);
-        }});
+        user.addFriend(friend);
         */
 
-        return userRepository.save(u);
+        return userRepository.saveAndFlush(user);
     }
+
 
     private String buildUserSlug(User u) {
         String candidate = (
@@ -267,5 +267,9 @@ public class UserServiceImpl implements UserService {
         Dev.print(count);
 
         return count == 1;
+    }
+
+    public User getAuthenticatedUser() {
+        return this.getUser(this.authenticatedUser.getUserId());
     }
 }

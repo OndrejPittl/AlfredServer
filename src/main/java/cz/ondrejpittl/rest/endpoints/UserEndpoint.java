@@ -2,6 +2,7 @@ package cz.ondrejpittl.rest.endpoints;
 
 import cz.ondrejpittl.business.annotations.AuthenticatedUser;
 import cz.ondrejpittl.business.annotations.Secured;
+import cz.ondrejpittl.business.services.FriendshipService;
 import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.User;
@@ -26,6 +27,8 @@ public class UserEndpoint {
     @Inject
     private UserRestMapper userRestMapper;
 
+    @Inject
+    private FriendshipService friendshipService;
 
 
     // --------------- GET ----------------
@@ -83,13 +86,35 @@ public class UserEndpoint {
         return Response.ok(userService.createUser(user)).build();
     }
 
+    /**
+     * Creates a friendship with the user of ID given.
+     * @return      DTO response
+     */
+    @POST
+    @Secured
+    @Path("/{id}/friendship")
+    public Response createFriendship(@PathParam("id") final Long id) {
+        return Response.ok(friendshipService.createFriendRequest(id)).build();
+    }
 
-    // -------------- PATCH ---------------
+
+    // --------------- PUT ---------------
 
     @PUT
     @Secured
     public Response modifyUser(UserDTO user) {
         return Response.ok(this.userRestMapper.toDTO(userService.modifyUser(user))).build();
+    }
+
+    /**
+     * Approves a friendship with the user of ID given.
+     * @return      DTO response
+     */
+    @PUT
+    @Secured
+    @Path("/{id}/friendship")
+    public Response approveFriendship(@PathParam("id") final Long id) {
+        return Response.ok(friendshipService.approveFriendRequest(id)).build();
     }
 
 
@@ -108,8 +133,16 @@ public class UserEndpoint {
     }
 
 
-
-
+    /**
+     * Cancels the friendship with the user of ID given.
+     * @return      DTO response
+     */
+    @DELETE
+    @Secured
+    @Path("/{id}/friendship")
+    public Response cancelFriendship(@PathParam("id") final Long id) {
+        return Response.ok(friendshipService.cancelFriendship(id)).build();
+    }
 
 
 

@@ -2,6 +2,7 @@ package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import cz.ondrejpittl.dev.Dev;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -61,8 +62,15 @@ public class User {
      */
     private String password;
 
+    /**
+     * Disabling user.
+     */
     @Column(nullable=false, columnDefinition="boolean default false")
     private boolean disabled;
+
+
+
+    // --- posts ---
 
     /**
      * User's posts.
@@ -76,6 +84,9 @@ public class User {
     private Set<Post> posts = new HashSet<Post>();
 
 
+
+    // --- comments ---
+
     @OneToMany(
         mappedBy = "user",
         orphanRemoval = true,
@@ -83,6 +94,25 @@ public class User {
         cascade = CascadeType.ALL
     )
     private Set<Comment> comments = new HashSet<>();
+
+
+
+    // --- friendship ---
+
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    private Set<Friendship> friendWith = new HashSet<>();
+
+    @OneToMany(
+        mappedBy = "friend",
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    private Set<Friendship> friendedBy = new HashSet<>();
+
 
 
 
@@ -194,6 +224,22 @@ public class User {
         this.comments = comments;
     }
 
+    public Set<Friendship> getFriendWith() {
+        return friendWith;
+    }
+
+    public void setFriendWith(Set<Friendship> friendWith) {
+        this.friendWith = friendWith;
+    }
+
+    public Set<Friendship> getFriendedBy() {
+        return friendedBy;
+    }
+
+    public void setFriendedBy(Set<Friendship> friendedBy) {
+        this.friendedBy = friendedBy;
+    }
+
     public void addPost(Post post) {
         // post –> set
         // user –> post
@@ -206,5 +252,85 @@ public class User {
         for(Post post : posts) {
             this.addPost(post);
         }
+    }
+
+    public void addFriend(User friend) {
+        Friendship f = new Friendship(this, friend);
+        this.friendWith.add(f);
+        //this.friendedBy.add(f);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+        return ((User) obj).getId().equals(this.id);
+    }
+
+
+    public void approveFriendRequest(Long friendId) {
+        Friendship friendship = null;
+
+        // approve only request sent from another user!
+        //      –> this.friendedBy
+        //      –> f.getUser() = request initiator –> f.getUser() == friendId
+        for(Friendship f : this.friendedBy) {
+            if(f.getUser().getId().equals(friendId)) {
+                Dev.print("Found friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
+                friendship = f;
+                break;
+            }
+        }
+
+        if(friendship != null) {
+            Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
+            friendship.approve();
+        }
+    }
+
+    public Friendship cancelFriendRequest(Long friendId) {
+        // cancel any friend request / friendship
+        //      –> this.friendWith + f.getFriend()
+        //      –> this.friendedBy + f.getUser()
+        //          == no matter who initiated the relation
+
+        Friendship friendship = null;
+
+        // incoming friend requests
+        for(Friendship f : this.friendedBy) {
+            if(f.getUser().getId().equals(friendId)) {
+                Dev.print("Found incoming friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
+                friendship = f;
+                //this.friendedBy.remove(friendship);
+                break;
+            }
+        }
+
+        // outcoming friend requests
+        if(friendship == null) {
+            for(Friendship f : this.friendWith) {
+                if(f.getFriend().getId().equals(friendId)) {
+                    Dev.print("Found outcoming friend request from " + f.getFriend().getEmail() + " ID " + f.getFriend().getId() + ", looking for ID " + friendId);
+                    friendship = f;
+                    //this.friendWith.remove(friendship);
+                    break;
+                }
+            }
+        }
+
+        if(friendship != null) {
+            Dev.print("Found friendship: " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
+        }
+
+        return friendship;
+    }
+
+    private Friendship findFriendship(Long friendId) {
+        for(Friendship f : this.friendWith) {
+            if(f.getFriend().getId().equals(friendId)) {
+                return f;
+            }
+        }
+        return null;
     }
 }
