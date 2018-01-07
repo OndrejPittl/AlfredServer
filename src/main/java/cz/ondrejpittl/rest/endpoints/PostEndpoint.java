@@ -3,6 +3,7 @@ package cz.ondrejpittl.rest.endpoints;
 import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.CommentService;
 import cz.ondrejpittl.business.services.PostService;
+import cz.ondrejpittl.business.services.RatingService;
 import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
@@ -31,6 +32,8 @@ public class PostEndpoint {
     @Inject
     private PostRestMapper postRestMapper;
 
+    @Inject
+    private RatingService ratingService;
 
 
     @Inject
@@ -92,6 +95,17 @@ public class PostEndpoint {
     }
 
 
+    /**
+     * Rates the post of ID given via URL.
+     * @param id    Post ID given via URL
+     * @return      DTO response
+     */
+    @POST
+    @Secured
+    @Path("/{id}/rating")
+    public Response ratePost(@PathParam("id") final Long id) {
+        return Response.ok(ratingService.registerRating(id)).build();
+    }
 
 
     // --------------- PUT ---------------
@@ -117,5 +131,18 @@ public class PostEndpoint {
     @Path("/{id}")
     public Response removePost(@PathParam("id") final Long id) {
         return Response.ok(postService.removePost(id)).build();
+    }
+
+
+    /**
+     * Rates the post of ID given via URL.
+     * @param id    Post ID given via URL
+     * @return      DTO response
+     */
+    @DELETE
+    @Secured
+    @Path("/{id}/rating")
+    public Response unratePost(@PathParam("id") final Long id) {
+        return Response.ok(ratingService.cancelRating(id)).build();
     }
 }

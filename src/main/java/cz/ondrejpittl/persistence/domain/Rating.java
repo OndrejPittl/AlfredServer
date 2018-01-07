@@ -2,31 +2,23 @@ package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.Date;
 
 
 @Entity
-@Table(name = "COMMENTS")
+@Table(name = "RATINGS")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
-public class Comment {
+public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    @Column(nullable=false, columnDefinition = "TEXT")
-    private String body;
-
     @Column(nullable=false)
     private Date date = new Date();
-
-    /**
-     * Comment last modification. DATETIME
-     */
-    private Date lastModified;
-
 
     @ManyToOne(
         fetch = FetchType.EAGER
@@ -41,17 +33,13 @@ public class Comment {
     private Post post;
 
 
-    public Comment() {}
+    public Rating() {}
 
-    public Comment(String body, Date date) {
-        this(body, date, null, null);
-    }
 
-    public Comment(String body, Date date, User user, Post post) {
-        this.body = body;
-        this.date = date;
+    public Rating(User user, Post post) {
         this.user = user;
         this.post = post;
+        this.date = new Date(System.currentTimeMillis());
     }
 
     public Long getId() {
@@ -60,6 +48,14 @@ public class Comment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public User getUser() {
@@ -76,29 +72,5 @@ public class Comment {
 
     public void setPost(Post post) {
         this.post = post;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
     }
 }

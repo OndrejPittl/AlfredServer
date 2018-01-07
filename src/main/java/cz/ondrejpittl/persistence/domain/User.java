@@ -114,6 +114,24 @@ public class User {
     private Set<Friendship> friendedBy = new HashSet<>();
 
 
+    // --- ratings ---
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    private Set<Rating> rated = new HashSet<>();
+
+    /*
+    @ManyToMany(
+        mappedBy = "rating",
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+        fetch = FetchType.EAGER
+    )
+    private Set<Post> rated = new HashSet<>();
+    */
 
 
     public User() {}
@@ -240,6 +258,24 @@ public class User {
         this.friendedBy = friendedBy;
     }
 
+    /*
+    public Set<Post> getRated() {
+        return rated;
+    }
+
+    public void setRated(Set<Post> rated) {
+        this.rated = rated;
+    }
+    */
+
+    public Set<Rating> getRated() {
+        return rated;
+    }
+
+    public void setRated(Set<Rating> rated) {
+        this.rated = rated;
+    }
+
     public void addPost(Post post) {
         // post –> set
         // user –> post
@@ -333,4 +369,10 @@ public class User {
         }
         return null;
     }
+
+    /*
+    public void addRated(Post p) {
+        this.rated.add(p);
+    }
+    */
 }

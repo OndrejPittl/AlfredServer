@@ -2,6 +2,8 @@ package cz.ondrejpittl.persistence.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.ondrejpittl.dev.Dev;
 import javafx.geometry.Pos;
 
@@ -28,7 +30,10 @@ public class Post {
     /**
      * User. INT, FK
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(
+            fetch = FetchType.EAGER
+
+    )
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
@@ -80,6 +85,30 @@ public class Post {
         cascade = CascadeType.ALL
     )
     private Set<Comment> comments = new HashSet<>();
+
+
+
+    @OneToMany(
+            mappedBy = "post",
+            orphanRemoval = true,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    private Set<Rating> rating = new HashSet<>();
+
+
+    /*
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinTable(
+        name = "POSTS_HAVE_RATINGS",
+        joinColumns = { @JoinColumn(name = "postId", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "userId", referencedColumnName = "id") }
+    )
+    private Set<User> rating = new HashSet<>();
+    */
 
 
     public Post() { }
@@ -176,6 +205,24 @@ public class Post {
         this.comments = comments;
     }
 
+    /*
+    public Set<User> getRating() {
+        return rating;
+    }
+
+    public void setRating(Set<User> rating) {
+        this.rating = rating;
+    }
+    */
+
+    public Set<Rating> getRating() {
+        return rating;
+    }
+
+    public void setRating(Set<Rating> rating) {
+        this.rating = rating;
+    }
+
     public void addTag(Tag tag) {
         // many-to-many => many-posts – many-tags
         this.tags.add(tag);
@@ -209,6 +256,16 @@ public class Post {
         //comment.setPost(this);
     }
 
+    /*
+    public void rate(User user) {
+        this.rating.add(user);
+    }
+
+    public void unrate(User user) {
+        this.rating.remove(user);
+    }
+    */
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -234,4 +291,15 @@ public class Post {
         return ("" + (this.id ? this.id.hashCode() : "") + this.title.hashCode() + this.body.hashCode()).hashCode();
     }
     */
+
+    @Override
+    public String toString() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return super.toString();
+    }
 }

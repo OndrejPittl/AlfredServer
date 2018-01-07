@@ -54,6 +54,11 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public User createFriendRequest(Long friendId) {
         User user = this.userService.getAuthenticatedUser();
+
+        if(user.getId().equals(friendId)) {
+            return null;
+        }
+
         User friend = this.userService.getUser(friendId);
         Friendship f = new Friendship(user, friend);
         this.friendshipRepository.saveAndFlush(f);

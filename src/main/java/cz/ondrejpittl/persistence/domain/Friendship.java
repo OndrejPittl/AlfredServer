@@ -22,12 +22,16 @@ public class Friendship {
     private Long id;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(
+        fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(
+        fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "friendId", nullable = false)
     private User friend;
 
