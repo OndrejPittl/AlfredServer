@@ -1,11 +1,13 @@
 package cz.ondrejpittl.rest.endpoints;
 
+import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.AuthService;
 import cz.ondrejpittl.business.services.TagService;
 import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.TagRestMapper;
 import cz.ondrejpittl.mappers.UserRestMapper;
+import cz.ondrejpittl.persistence.domain.Identity;
 import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.TagDTO;
 import cz.ondrejpittl.rest.dtos.TokenDTO;
@@ -33,20 +35,48 @@ public class AuthEndpoint {
     private UserRestMapper userMapper;
 
 
-    @POST
-    public Response authenticate(UserDTO user) {
-        String mail = user.getEmail(),
-               pwd = user.getPassword();
+    @HeaderParam("Authorization")
+    private String authString;
 
-        // if user exists / correct credentials given
-        if(this.authService.checkUserCredentials(mail, pwd)) {
-            TokenDTO token = this.authService.registerUser(mail);
-            return Response.ok(token).build();
-        }
 
-        return Response.ok(new TokenDTO(null)).build();
+
+    // -------------------- GET --------------------
+
+    @GET
+    @Secured
+    @Path("/me")
+    public Response whoami() {
+        User user = this.userService.getAuthenticatedUser();
+        return Response.ok(userMapper.toDTO(user)).build();
     }
 
+
+    // ------------------- POST -------------------
+
+
+    @POST
+    public Response authenticate(UserDTO dto) {
+        String mail = dto.getEmail(),
+               pwd = dto.getPassword();
+
+        boolean authenticated = this.authService.checkUserCredentials(mail, pwd);
+
+        // if user exists / correct credentials given
+        if(authenticated) {
+            User user = this.authService.registerUser(mail);
+            return Response.ok(userMapper.toDTO(user)).build();
+        }
+
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+
+    @POST
+    @Secured
+    @Path("/logout")
+    public Response signOut() {
+        this.authService.rejectUser(this.authString);
+        return Response.status(Response.Status.ACCEPTED).build();
+    }
 
 
 

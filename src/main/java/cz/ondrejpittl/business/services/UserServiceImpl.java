@@ -11,7 +11,10 @@ import cz.ondrejpittl.utils.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.swing.*;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 @ApplicationScoped
@@ -38,6 +41,129 @@ public class UserServiceImpl implements UserService {
 
 
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public List<User> getAllActiveUsers() {
+        return userRepository.findByDisabledEqualOrderByFirstNameAsc(false); // disabled == false == 0
+    }
+
+    public User getUser(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public User getActiveUser(Long id) {
+        return userRepository.findByIdAndDisabledEqual(id, false);
+    }
+
+    public User getUser(String slug) {
+        return userRepository.findBySlug(slug);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmailLike(email);
+    }
+
+    @Transactional
+    public User createUser(UserDTO dto) {
+        User user = userMapper.fromDTO(dto);
+
+        user.setSlug(this.buildUserSlug(user));
+        user.setPassword(Encryptor.bcrypt(user.getPassword()));
+
+        /*
+        User friend = userMapper.fromDTO( new UserDTO("Halina", "Pawlowska", "ultimatni@halina.com", Sex.FEMALE, null, null, "kozyjakovozy"));
+        friend.setSlug(this.buildUserSlug(friend));
+        friend.setPassword(Encryptor.bcrypt(friend.getPassword()));
+        userRepository.saveAndFlush(friend);
+        userRepository.saveAndFlush(user);
+        Dev.printObject(user);
+        Dev.printObject(friend);
+        user.addFriend(friend);
+        */
+
+        return userRepository.saveAndFlush(user);
+    }
+
+    public boolean checkEmailAvailability(String email) {
+        Long c = this.userRepository.countUsersByEmail(email);
+        Dev.print("E-mail already taken (" + c + ")");
+        return c <= 0;
+    }
+
+
+    private String buildUserSlug(User u) {
+        String candidate = (
+            StringUtils.stripAccents(u.getFirstName()) + "-" + StringUtils.stripAccents(u.getLastName())
+        ).replace(" ", "-").toLowerCase();
+
+        // if taken
+        while (this.userRepository.countUsersBySlug(candidate) > 0) {
+            candidate += "-" + ((int)(Math.random() * 99999 + 1));
+        }
+
+        return candidate;
+    }
+
+    public User disableCurrentUser() {
+        Long id = this.authenticatedUser.getUserId();
+        return this.disableUser(id);
+    }
+
+    @Transactional
+    public User disableUser(Long id) {
+        User u = this.getUser(id);
+        u.setDisabled(true);
+        return this.userRepository.save(u);
+    }
+
+    @Transactional
+    public User modifyUser(UserDTO user) {
+        Long uID = this.authenticatedUser.getUserId();
+
+        Dev.print("Modifying user with ID: " + uID);
+
+        User u = this.getUser(uID);
+
+        // optional
+        if(user.getPassword() != null) {
+            u.setPassword(Encryptor.bcrypt(user.getPassword()));
+        }
+
+        // required –> always set
+        u.setFirstName(user.getFirstName());
+        u.setLastName(user.getLastName());
+        u.setEmail(user.getEmail());
+
+        // optional
+        if(user.getPhoto() != null) {
+            u.setPhoto(user.getPhoto());
+        }
+
+        this.userRepository.save(u);
+        return u;
+    }
+
+    public boolean checkUserExists(String email, String hashedPwd) {
+        Long count = this.userRepository.countUsers(email, hashedPwd);
+
+        Dev.print(count);
+
+        return count == 1;
+    }
+
+    public User getAuthenticatedUser() {
+        return this.getUser(this.authenticatedUser.getUserId());
+    }
+
+    public boolean checkUserExists(Long id) {
+        return this.userRepository.countUsers(id) == 1;
+    }
+
+
+
+    /*
     // @TODO: ---- development-only:
     @Transactional
     public boolean init() {
@@ -121,155 +247,39 @@ public class UserServiceImpl implements UserService {
         userRepository.save(u2);
         userRepository.save(u3);
 
-        /*
-        User u = new User("jmeno", "prijmeni", "mail", Sex.MALE, "photo", "slug", "pwd");
-        Post p = new Post("title", "body", "image", new Date());
-        Tag t = new Tag("tag");
-        Tag t2 = new Tag("tag2");
-        Comment c1 = new Comment("comment1", new Date());
-        Comment c2 = new Comment("comment2", new Date());
 
-        t.setPosts(new HashSet<Post>(){{ add(p); }});
-        t2.setPosts(new HashSet<Post>(){{ add(p); }});
-
-        p.setTags(new HashSet<Tag>(){{
-            add(t);
-            add(t2);
-        }});
-
-        c1.setUser(u);
-        c2.setUser(u);
-        c1.setPost(p);
-        c2.setPost(p);
-
-        p.setComments(new HashSet<Comment>(){{ add(c1); add(c2); }});
-        u.setComments(new HashSet<Comment>(){{ add(c1); add(c2); }});
-
-        p.setUser(u);
-        u.setPosts(new HashSet<Post>(){{ add(p); }});
-
-        userRepository.save(u);
-        */
+//        User u = new User("jmeno", "prijmeni", "mail", Sex.MALE, "photo", "slug", "pwd");
+//        Post p = new Post("title", "body", "image", new Date());
+//        Tag t = new Tag("tag");
+//        Tag t2 = new Tag("tag2");
+//        Comment c1 = new Comment("comment1", new Date());
+//        Comment c2 = new Comment("comment2", new Date());
+//
+//        t.setPosts(new HashSet<Post>(){{ add(p); }});
+//        t2.setPosts(new HashSet<Post>(){{ add(p); }});
+//
+//        p.setTags(new HashSet<Tag>(){{
+//            add(t);
+//            add(t2);
+//        }});
+//
+//        c1.setUser(u);
+//        c2.setUser(u);
+//        c1.setPost(p);
+//        c2.setPost(p);
+//
+//        p.setComments(new HashSet<Comment>(){{ add(c1); add(c2); }});
+//        u.setComments(new HashSet<Comment>(){{ add(c1); add(c2); }});
+//
+//        p.setUser(u);
+//        u.setPosts(new HashSet<Post>(){{ add(p); }});
+//
+//        userRepository.save(u);
 
         return true;
     }
 
     // -----------------------------
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public List<User> getAllActiveUsers() {
-        return userRepository.findByDisabledEqualOrderByFirstNameAsc(false); // disabled == false == 0
-    }
-
-    public User getUser(Long id) {
-        return userRepository.findBy(id);
-    }
-
-    public User getUser(String slug) {
-        return userRepository.findBySlug(slug);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmailLike(email);
-    }
-
-    @Transactional
-    public User createUser(UserDTO dto) {
-        User user = userMapper.fromDTO(dto);
-
-        user.setSlug(this.buildUserSlug(user));
-        user.setPassword(Encryptor.bcrypt(user.getPassword()));
-
-        /*
-        User friend = userMapper.fromDTO(
-            new UserDTO("Halina",
-                    "Pawlowska",
-                    "ultimatni@halina.com",
-                    Sex.FEMALE, null,
-                    null,
-                    "kozyjakovozy")
-        );
-
-        friend.setSlug(this.buildUserSlug(friend));
-        friend.setPassword(Encryptor.bcrypt(friend.getPassword()));
-
-        userRepository.saveAndFlush(friend);
-        userRepository.saveAndFlush(user);
-
-        Dev.printObject(user);
-        Dev.printObject(friend);
-
-        user.addFriend(friend);
-        */
-
-        return userRepository.saveAndFlush(user);
-    }
-
-
-    private String buildUserSlug(User u) {
-        String candidate = (
-            StringUtils.stripAccents(u.getFirstName()) + "-" + StringUtils.stripAccents(u.getLastName())
-        ).replace(" ", "-").toLowerCase();
-
-        // if taken
-        while (this.userRepository.countUsersBySlug(candidate) > 0) {
-            candidate += "-" + ((int)(Math.random() * 99999 + 1));
-        }
-
-        return candidate;
-    }
-
-    public User disableCurrentUser() {
-        Long id = this.authenticatedUser.getUserId();
-        return this.disableUser(id);
-    }
-
-    @Transactional
-    public User disableUser(Long id) {
-        User u = this.getUser(id);
-        u.setDisabled(true);
-        return this.userRepository.save(u);
-    }
-
-    @Transactional
-    public User modifyUser(UserDTO user) {
-        Long uID = this.authenticatedUser.getUserId();
-
-        Dev.print("Modifying use with ID: " + uID);
-
-        User u = this.getUser(uID);
-
-        // optional
-        if(user.getPassword() != null) {
-            u.setPassword(Encryptor.bcrypt(user.getPassword()));
-        }
-
-        // required –> always set
-        u.setFirstName(user.getFirstName());
-        u.setLastName(user.getLastName());
-        u.setEmail(user.getEmail());
-
-        // optional
-        if(user.getPhoto() != null) {
-            u.setPhoto(user.getPhoto());
-        }
-
-        this.userRepository.save(u);
-        return u;
-    }
-
-    public boolean checkUserExists(String email, String hashedPwd) {
-        Long count = this.userRepository.countUsers(email, hashedPwd);
-
-        Dev.print(count);
-
-        return count == 1;
-    }
-
-    public User getAuthenticatedUser() {
-        return this.getUser(this.authenticatedUser.getUserId());
-    }
+    */
 }

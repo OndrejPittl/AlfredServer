@@ -1,5 +1,6 @@
 package cz.ondrejpittl.business.services;
 
+import cz.ondrejpittl.business.cfg.Config;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.PostRestMapper;
 import cz.ondrejpittl.persistence.domain.Post;
@@ -8,6 +9,8 @@ import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.persistence.repository.PostRepository;
 import cz.ondrejpittl.rest.dtos.PostDTO;
 import cz.ondrejpittl.utils.Encryptor;
+import org.apache.deltaspike.data.api.FirstResult;
+import org.apache.deltaspike.data.api.MaxResults;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,10 +30,29 @@ public class PostServiceImpl implements PostService {
     @Inject
     TagService tagService;
 
+    @Inject
+    UserService userService;
 
-    public List<Post> getAllPosts() {
-        return this.postRepository.findAll();
+
+    public List<Post> getPosts() {
+        return this.postRepository.findAllOrderByDate();
     }
+
+    /*
+    public List<Post> getPosts(int page) {
+        int offset = (page - 1) * Config.POST_LIMIT;
+        return this.postRepository.findAll(offset, Config.POST_LIMIT);
+    }
+    */
+
+    public List<Post> getPosts(int offset) {
+        return this.postRepository.findAllOrderByDate(offset, Config.POST_LIMIT);
+    }
+
+    /*public List<Post> getPostsFrom(Long id) {
+        //return this.postRepository.find
+        return null;
+    }*/
 
     public Post getPost(Long id) {
         return this.postRepository.findBy(id);
@@ -39,6 +61,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post createPost(PostDTO dto) {
         Post p = postMapper.fromDTO(dto);
+        User u = this.userService.getAuthenticatedUser();
+        p.setUser(u);
         return postRepository.save(p);
     }
 
@@ -50,7 +74,6 @@ public class PostServiceImpl implements PostService {
 
         this.postRepository.removeById(id);
         this.tagService.removeOrphans(tags);
-        //this.tagService.removeOrphans();
         return null;
     }
 
@@ -114,5 +137,9 @@ public class PostServiceImpl implements PostService {
 
 
         return orig;
+    }
+
+    public boolean checkPostExists(Long id) {
+        return this.postRepository.countPosts(id) == 1;
     }
 }

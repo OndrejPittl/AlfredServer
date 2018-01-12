@@ -38,6 +38,7 @@ public class UserRestMapper {
         dto.setPhoto(user.getPhoto());
         dto.setSlug(user.getSlug());
         dto.setPassword(user.getPassword());
+        dto.setToken(user.getToken());
 
         if (user.getPosts() != null) {
             dto.setPosts(new HashSet<PostDTO>(){{
@@ -60,6 +61,8 @@ public class UserRestMapper {
         user.setPhoto(dto.getPhoto());
         user.setSlug(dto.getSlug());
         user.setPassword(dto.getPassword());
+        user.setConfirmPassword(dto.getConfirmPassword());
+
         return user;
     }
 }

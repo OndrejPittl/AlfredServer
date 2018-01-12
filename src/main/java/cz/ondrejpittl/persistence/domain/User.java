@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import cz.ondrejpittl.dev.Dev;
 
 import javax.persistence.*;
+import javax.ws.rs.WebApplicationException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,13 +25,13 @@ public class User {
     /**
      * First name. VARCHAR(255)
      */
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String firstName;
 
     /**
      * Last name. VARCHAR(255)
      */
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String lastName;
 
     /**
@@ -60,6 +61,7 @@ public class User {
     /**
      * Password.
      */
+    @Column(length = 60)
     private String password;
 
     /**
@@ -67,6 +69,18 @@ public class User {
      */
     @Column(nullable=false, columnDefinition="boolean default false")
     private boolean disabled;
+
+
+
+    /**
+     * Password confirmation.
+     */
+    @Transient
+    private String confirmPassword;
+
+
+    @Transient
+    private String token;
 
 
 
@@ -226,6 +240,22 @@ public class User {
         this.password = password;
     }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public boolean isDisabled() {
         return disabled;
     }
@@ -304,24 +334,27 @@ public class User {
     }
 
 
-    public void approveFriendRequest(Long friendId) {
+    public boolean approveFriendRequest(Long friendId) {
         Friendship friendship = null;
 
         // approve only request sent from another user!
         //      –> this.friendedBy
         //      –> f.getUser() = request initiator –> f.getUser() == friendId
         for(Friendship f : this.friendedBy) {
-            if(f.getUser().getId().equals(friendId)) {
+            if(f.getUser().getId().equals(friendId) && !f.getUser().isDisabled()) {
                 Dev.print("Found friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
                 friendship = f;
                 break;
             }
         }
 
-        if(friendship != null) {
-            Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
-            friendship.approve();
+        if(friendship == null) {
+            return false;
         }
+
+        Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
+        friendship.approve();
+        return false;
     }
 
     public Friendship cancelFriendRequest(Long friendId) {

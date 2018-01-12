@@ -48,20 +48,7 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
-    /*
-    public boolean authenticate(User user, String token) {
-
-        // invalid token received
-        if(!TokenGenerator.verifyToken(token, user)) {
-            return false;
-        }
-
-        User u = this.sessionUsers.get(token);
-        return u != null && u.equals(user);
-    }
-    */
-
-    public TokenDTO registerUser(String email) {
+    public User registerUser(String email) {
         User user = this.userService.getUserByEmail(email);
         String token = TokenGenerator.generateToken(user);
 
@@ -76,7 +63,19 @@ public class AuthServiceImpl implements AuthService {
         );
 
         this.sessionUsers.put(token, identity);
-        return new TokenDTO(token);
+
+        user.setToken(token);
+        return user;
+    }
+
+    public void rejectUser(String authString) {
+        String token = authString.split(" ")[1];
+
+        Dev.print("Logging out user with token " + token);
+
+        if(this.sessionUsers.containsKey(token)) {
+            this.sessionUsers.remove(token);
+        }
     }
 
     public boolean checkUserCredentials(String mail, String pwd) {

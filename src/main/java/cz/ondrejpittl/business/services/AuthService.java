@@ -7,7 +7,9 @@ import cz.ondrejpittl.rest.dtos.TokenDTO;
 
 public interface AuthService {
 
-    TokenDTO registerUser(String email);
+    User registerUser(String email);
+
+    void rejectUser(String authString);
 
     //boolean authenticate(User user, String token);
 

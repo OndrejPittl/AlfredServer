@@ -1,16 +1,22 @@
 package cz.ondrejpittl.rest.endpoints;
 
-import cz.ondrejpittl.business.annotations.AuthenticatedUser;
+import cz.ondrejpittl.business.annotations.ExistingUser;
 import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.FriendshipService;
 import cz.ondrejpittl.business.services.UserService;
+import cz.ondrejpittl.business.validation.CreateGroup;
+import cz.ondrejpittl.business.validation.ModifyGroup;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.User;
-import cz.ondrejpittl.rest.dtos.TokenDTO;
 import cz.ondrejpittl.rest.dtos.UserDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -53,14 +59,25 @@ public class UserEndpoint {
     }
 
     /**
-     * Get specific user defined by ID.
+     * Get specific user defined by ID given via URL.
      * @param id    id of a user given via URL
      * @return      DTO response
      */
     @GET
     @Path("/{id}")
-    public Response getUser(@PathParam("id") final Long id) {
-        return Response.ok(userRestMapper.toDTO(userService.getUser(id))).build();
+    public Response getUser(
+            @PathParam("id")
+            @Min(value = 1, message = "user.id.negative")
+            @ExistingUser(message = "user.id.notfound") final Long id) {
+
+        User u = userService.getUser(id);
+
+        if(u == null) {
+            //throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok(userRestMapper.toDTO(u)).build();
     }
 
     /**
@@ -70,8 +87,14 @@ public class UserEndpoint {
      */
     @GET
     @Path("/slug/{slug}")
-    public Response getUser(@PathParam("slug") final String slug) {
-        return Response.ok(userRestMapper.toDTO(userService.getUser(slug))).build();
+    public Response getUser(@PathParam("slug") @Size(min = 1, message = "user.slug.length") final String slug) {
+        User u = userService.getUser(slug);
+
+        if(u == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("No user " + slug + " exists.").build();
+        }
+
+        return Response.ok(userRestMapper.toDTO(u)).build();
     }
 
     // --------------- POST ---------------
@@ -82,9 +105,11 @@ public class UserEndpoint {
      * @return      DTO response
      */
     @POST
-    public Response createUser(UserDTO user) {
+    public Response createUser(@Valid @ConvertGroup(from = Default.class, to = CreateGroup.class) UserDTO user) {
         return Response.ok(userService.createUser(user)).build();
     }
+
+
 
     /**
      * Creates a friendship with the user of ID given.
@@ -93,7 +118,7 @@ public class UserEndpoint {
     @POST
     @Secured
     @Path("/{id}/friendship")
-    public Response createFriendship(@PathParam("id") final Long id) {
+    public Response createFriendship(@PathParam("id") @Min(value = 1, message = "user.id.negative") @ExistingUser(message = "user.id.notfound") final Long id) {
         return Response.ok(friendshipService.createFriendRequest(id)).build();
     }
 
@@ -102,7 +127,7 @@ public class UserEndpoint {
 
     @PUT
     @Secured
-    public Response modifyUser(UserDTO user) {
+    public Response modifyUser(@Valid @ConvertGroup(from = Default.class, to = ModifyGroup.class) UserDTO user) {
         return Response.ok(this.userRestMapper.toDTO(userService.modifyUser(user))).build();
     }
 
@@ -113,7 +138,7 @@ public class UserEndpoint {
     @PUT
     @Secured
     @Path("/{id}/friendship")
-    public Response approveFriendship(@PathParam("id") final Long id) {
+    public Response approveFriendship(@PathParam("id") @ExistingUser(message = "user.id.notfound") final Long id) {
         return Response.ok(friendshipService.approveFriendRequest(id)).build();
     }
 
@@ -127,7 +152,6 @@ public class UserEndpoint {
      */
     @DELETE
     @Secured
-    //@Path("/{id}") public Response removeUser(@PathParam("id") final Long id) {
     public Response removeUser() {
         return Response.ok(userService.disableCurrentUser()).build();
     }
@@ -140,17 +164,24 @@ public class UserEndpoint {
     @DELETE
     @Secured
     @Path("/{id}/friendship")
-    public Response cancelFriendship(@PathParam("id") final Long id) {
+    public Response cancelFriendship(@PathParam("id") @ExistingUser(message = "user.id.notfound") final Long id) {
         return Response.ok(friendshipService.cancelFriendship(id)).build();
     }
 
 
 
+
+
+
+
     // -----------------------------------------------------------------------------
+
+    /*
     @GET
     @Path("/init")
     //TODO: initial mock data
     public Response init() {
         return Response.ok(userService.init()).build();
     }
+    */
 }

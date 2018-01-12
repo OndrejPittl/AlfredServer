@@ -9,6 +9,8 @@ import cz.ondrejpittl.persistence.repository.UserRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 @ApplicationScoped
@@ -44,11 +46,14 @@ public class FriendshipServiceImpl implements FriendshipService {
         Dev.print("Getting friend[ships|requests] of:");
         Dev.printObject(user);
 
-        return new HashSet<User>(){{
-            for(Friendship f : user.getFriendWith()) {
-                if(f.isAccepted() == accepted) add(f.getFriend());
+        HashSet<User> friends = new HashSet<>();
+        for(Friendship f : user.getFriendWith()) {
+            if(f.isAccepted() == accepted && !f.getFriend().isDisabled()) {
+                friends.add(f.getFriend());
             }
-        }};
+        }
+
+        return friends.size() > 0 ? friends : null;
     }
 
     @Transactional
@@ -56,10 +61,15 @@ public class FriendshipServiceImpl implements FriendshipService {
         User user = this.userService.getAuthenticatedUser();
 
         if(user.getId().equals(friendId)) {
-            return null;
+            throw new WebApplicationException("Denied: You can't be your friend!", Response.Status.CONFLICT);
         }
 
-        User friend = this.userService.getUser(friendId);
+        User friend = this.userService.getActiveUser(friendId);
+
+        if(friend == null) {
+            throw new WebApplicationException("User ID " + friendId + " not found.", Response.Status.NOT_FOUND);
+        }
+
         Friendship f = new Friendship(user, friend);
         this.friendshipRepository.saveAndFlush(f);
         return null;
@@ -68,7 +78,12 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Transactional
     public User approveFriendRequest(Long friendId) {
         User user = this.userService.getAuthenticatedUser();
-        user.approveFriendRequest(friendId);
+        boolean result = user.approveFriendRequest(friendId);
+
+        if(!result) {
+            throw new WebApplicationException("Friend request not found.", Response.Status.NOT_FOUND);
+        }
+
         return this.userRepository.save(user);
     }
 
@@ -76,8 +91,13 @@ public class FriendshipServiceImpl implements FriendshipService {
     public User cancelFriendship(Long friendId) {
         User user = this.userService.getAuthenticatedUser();
         Friendship f = user.cancelFriendRequest(friendId);
+
+        if(f == null) {
+            throw new WebApplicationException("Friendship/friend request not found.", Response.Status.NOT_FOUND);
+        }
+
         this.friendshipRepository.removeById(f.getId());
         this.friendshipRepository.flush();
-        return user; //return this.userRepository.save(user);
+        return user;
     }
 }

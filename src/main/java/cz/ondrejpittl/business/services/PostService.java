@@ -7,7 +7,12 @@ import java.util.List;
 
 public interface PostService {
 
-    List<Post> getAllPosts();
+    List<Post> getPosts();
+
+    //List<Post> getPosts(int page);
+    List<Post> getPosts(int offset);
+
+    //List<Post> getPostsFrom(Long id);
 
     Post getPost(Long id);
 
@@ -16,4 +21,6 @@ public interface PostService {
     Post removePost(Long id);
 
     Post modifyPost(Long id, PostDTO dto);
+
+    boolean checkPostExists(Long id);
 }

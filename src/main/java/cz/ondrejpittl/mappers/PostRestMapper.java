@@ -89,10 +89,14 @@ public class PostRestMapper {
             }});
         }
 
+
+
+        /*
         if(dto.getUserId() != null) {
             User user = userRepository.findBy(dto.getUserId());
             user.addPost(post);
         }
+        */
 
 
         /*

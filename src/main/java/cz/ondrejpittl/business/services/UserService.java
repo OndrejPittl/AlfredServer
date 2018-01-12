@@ -11,7 +11,7 @@ public interface UserService {
 
 
     // @TODO: ---- development-only:
-    boolean init();
+    // boolean init();
 
 
     // -----------------------------
@@ -21,6 +21,8 @@ public interface UserService {
     List<User> getAllActiveUsers();
 
     User getUser(Long id);
+
+    User getActiveUser(Long id);
 
     User getUser(String slug);
 
@@ -37,4 +39,9 @@ public interface UserService {
     boolean checkUserExists(String email, String hashedPwd);
 
     User getAuthenticatedUser();
+
+    boolean checkEmailAvailability(String email);
+
+    boolean checkUserExists(Long id);
+
 }

@@ -1,21 +1,19 @@
 package cz.ondrejpittl.rest.endpoints;
 
+import cz.ondrejpittl.business.annotations.ExistingPost;
 import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.CommentService;
 import cz.ondrejpittl.business.services.PostService;
 import cz.ondrejpittl.business.services.RatingService;
-import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.mappers.PostRestMapper;
-import cz.ondrejpittl.mappers.UserRestMapper;
-import cz.ondrejpittl.rest.dtos.CommentDTO;
 import cz.ondrejpittl.rest.dtos.PostDTO;
-import cz.ondrejpittl.rest.dtos.TokenDTO;
-import sun.tools.jstat.Token;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,12 +44,24 @@ public class PostEndpoint {
     // --------------- GET ----------------
 
     /**
-     * Gel all posts
+     * Gel ALL posts
      * @return  DTO response
      */
     @GET
-    public Response getAllPosts() {
-        return Response.ok(postRestMapper.toDTOs(postService.getAllPosts())).build();
+    public Response getPosts() {
+        return Response.ok(postRestMapper.toDTOs(postService.getPosts())).build();
+    }
+
+    /**
+     * Gel a subset of posts at defined offset via url.
+     * @param offset    offset defined via url
+     * @return          DTO response
+     */
+    @GET
+    public Response getPosts(
+            @QueryParam("offset")
+            @Min(value = 0, message = "post.offset.negative") int offset) {
+        return Response.ok(postRestMapper.toDTOs(postService.getPosts(offset))).build();
     }
 
     /**
@@ -61,24 +71,12 @@ public class PostEndpoint {
      */
     @GET
     @Path("/{id}")
-    public Response getPost(@PathParam("id") final Long id) {
+    public Response getPost(
+            @PathParam("id")
+            @Min(value = 1, message = "post.id.negative")
+            @ExistingPost(message = "post.id.notfound") final Long id) {
         return Response.ok(postRestMapper.toDTO(postService.getPost(id))).build();
     }
-
-
-    /*
-    ///
-     // Get all coments of the specific post defined by ID.
-     // @param id    id of a post given via URL
-     // @return      DTO response
-     //
-    @GET
-    @Path("/{id}/comments")
-    public Response getComments(@PathParam("id") final Long id) {
-        //return Response.ok(postRestMapper.toDTO(postService.getPost(id))).build();
-        return Response.ok(commentMapper.toDTOs(commentService.getAllComments())).build();
-    }
-    */
 
 
     // -------------- POST ----------------
@@ -90,7 +88,7 @@ public class PostEndpoint {
      */
     @POST
     @Secured
-    public Response createPost(PostDTO post) {
+    public Response createPost(@Valid PostDTO post) {
         return Response.ok(postService.createPost(post)).build();
     }
 
@@ -103,7 +101,10 @@ public class PostEndpoint {
     @POST
     @Secured
     @Path("/{id}/rating")
-    public Response ratePost(@PathParam("id") final Long id) {
+    public Response ratePost(
+            @PathParam("id")
+            @Min(value = 1, message = "post.id.negative")
+            @ExistingPost(message = "post.id.notfound") final Long id) {
         return Response.ok(ratingService.registerRating(id)).build();
     }
 
@@ -113,7 +114,10 @@ public class PostEndpoint {
     @PUT
     @Secured
     @Path("/{id}")
-    public Response modifyPost(@PathParam("id") final Long id, PostDTO post) {
+    public Response modifyPost(
+            @PathParam("id")
+            @Min(value = 1, message = "post.id.negative")
+            @ExistingPost(message = "post.id.notfound") final Long id, PostDTO post) {
         Dev.print("POST PUT: Endpoint reached.");
         return Response.ok(postService.modifyPost(id, post)).build();
     }
@@ -129,7 +133,10 @@ public class PostEndpoint {
     @DELETE
     @Secured
     @Path("/{id}")
-    public Response removePost(@PathParam("id") final Long id) {
+    public Response removePost(
+            @PathParam("id")
+            @Min(value = 1, message = "post.id.negative")
+            @ExistingPost(message = "post.id.notfound") final Long id) {
         return Response.ok(postService.removePost(id)).build();
     }
 
@@ -142,7 +149,10 @@ public class PostEndpoint {
     @DELETE
     @Secured
     @Path("/{id}/rating")
-    public Response unratePost(@PathParam("id") final Long id) {
+    public Response unratePost(
+            @PathParam("id")
+            @Min(value = 1, message = "post.id.negative")
+            @ExistingPost(message = "post.id.notfound") final Long id) {
         return Response.ok(ratingService.cancelRating(id)).build();
     }
 }
