@@ -6,7 +6,9 @@ import cz.ondrejpittl.dev.Dev;
 
 import javax.persistence.*;
 import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -95,6 +97,7 @@ public class User {
         fetch = FetchType.EAGER,
         cascade = { CascadeType.MERGE }
     )
+    @OrderBy("date")
     private Set<Post> posts = new HashSet<Post>();
 
 
@@ -107,6 +110,7 @@ public class User {
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL
     )
+    @OrderBy("date")
     private Set<Comment> comments = new HashSet<>();
 
 
@@ -136,6 +140,7 @@ public class User {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
+    @OrderBy("date")
     private Set<Rating> rated = new HashSet<>();
 
     /*
@@ -401,6 +406,20 @@ public class User {
             }
         }
         return null;
+    }
+
+    public List<User> getFriends() {
+        List<User> friends = new ArrayList<>();
+
+        for (Friendship f : this.friendedBy) {
+            if(f.isAccepted()) friends.add(f.getUser());
+        }
+
+        for (Friendship f : this.friendWith) {
+            if(f.isAccepted()) friends.add(f.getFriend());
+        }
+
+        return friends;
     }
 
     /*

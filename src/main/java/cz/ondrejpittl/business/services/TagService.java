@@ -14,6 +14,8 @@ public interface TagService {
 
     Tag getTag(Long id);
 
+    Tag getTag(String tag);
+
     Tag createTag(TagDTO tag);
 
     Tag getOrCreateTag(String tag);

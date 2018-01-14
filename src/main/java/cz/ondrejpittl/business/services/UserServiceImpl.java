@@ -161,6 +161,10 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.countUsers(id) == 1;
     }
 
+    public List<User> test() {
+        return this.userRepository.test();
+    }
+
 
 
     /*

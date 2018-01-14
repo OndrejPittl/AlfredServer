@@ -38,4 +38,6 @@ public interface UserRepository extends EntityRepository<User, Long> {
     @Query("select count(u) from User u where u.id = :id")
     Long countUsers(@QueryParam("id") Long id);
 
+    @Query("select u from User as u join u.friendedBy as fb")
+    List<User> test();
 }

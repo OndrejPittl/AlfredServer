@@ -32,6 +32,9 @@ public class TagServiceImpl implements TagService {
         return this.tagRepository.findBy(id);
     }
 
+    public Tag getTag(String tag) {
+        return this.tagRepository.findByNameLikeOrderByNameAsc(tag);
+    }
 
     @Transactional
     public Tag createTag(TagDTO tag) {
@@ -39,7 +42,7 @@ public class TagServiceImpl implements TagService {
     }
 
     public Tag getOrCreateTag(String tag) {
-        Tag t = this.tagRepository.findFirst1ByNameLike(tag);
+        Tag t = this.tagRepository.findByNameLikeOrderByNameAsc(tag);
 
         if(t == null) {
             Dev.print("Tag " + tag + " not found. Creating a new one.");

@@ -73,7 +73,7 @@ public class UserDTO {
      * Gender.
      */
     @NotNull(
-        groups = { CreateGroup.class },
+        groups = { CreateGroup.class, ModifyGroup.class },
         message = "required"
     )
     private Sex sex;

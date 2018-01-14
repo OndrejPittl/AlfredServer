@@ -37,7 +37,7 @@ public class UserRestMapper {
         dto.setSex(user.getSex());
         dto.setPhoto(user.getPhoto());
         dto.setSlug(user.getSlug());
-        dto.setPassword(user.getPassword());
+        //dto.setPassword(user.getPassword());
         dto.setToken(user.getToken());
 
         if (user.getPosts() != null) {

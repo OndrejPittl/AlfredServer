@@ -32,7 +32,7 @@ public class ValidationMessages {
         msgs.put("post.offset.negative", "Post feed offset must be a positive integer.");
         msgs.put("post.id.negative", "Post ID must be a positive integer.");
         msgs.put("post.id.notfound", "No Post of given ID was found.");
-        msgs.put("", "");
+        msgs.put("posts.tag.size", "Tag must consist of at least one character.");
         msgs.put("", "");
         msgs.put("", "");
         msgs.put("", "");

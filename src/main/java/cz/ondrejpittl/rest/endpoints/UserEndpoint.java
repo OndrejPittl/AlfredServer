@@ -80,6 +80,12 @@ public class UserEndpoint {
         return Response.ok(userRestMapper.toDTO(u)).build();
     }
 
+    @GET
+    @Path("/findPostsOfUsers")
+    public Response test() {
+        return Response.ok(userRestMapper.toDTOs(this.userService.test())).build();
+    }
+
     /**
      * Get specific user defined by slug.
      * @param slug  slug of a user given via URL

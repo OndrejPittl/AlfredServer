@@ -19,4 +19,6 @@ public interface FriendshipService {
 
     User cancelFriendship(Long friendId);
 
+
+
 }

@@ -9,8 +9,8 @@ import org.apache.deltaspike.data.api.SingleResultType;
 @Repository
 public interface TagRepository extends EntityRepository<Tag, Long> {
 
-    @Query(singleResult = SingleResultType.OPTIONAL)
-    Tag findFirst1ByNameLike(String name);
+    @Query(max = 1, singleResult = SingleResultType.OPTIONAL)
+    Tag findByNameLikeOrderByNameAsc(String name);
 
     Integer removeById(Long id);
 
