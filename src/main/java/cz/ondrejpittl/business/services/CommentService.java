@@ -6,6 +6,7 @@ import cz.ondrejpittl.rest.dtos.CommentDTO;
 import cz.ondrejpittl.rest.dtos.TagDTO;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CommentService {
 
@@ -15,9 +16,11 @@ public interface CommentService {
 
     Comment getComment(Long id);
 
-    Comment createComment(Long postId, CommentDTO comment);
+    List<Comment> createComment(Long postId, CommentDTO comment);
 
-    Comment removeComment(Long commentId);
+    List<Comment> removeComment(Long commentId);
 
-    Comment modifyComment(Long id, CommentDTO dto);
+    List<Comment> modifyComment(Long id, CommentDTO dto);
+
+    void removePostComments(List<Long> comIDs);
 }

@@ -9,7 +9,7 @@ public interface RatingService {
 
     Set<Post> getRatedPosts();
 
-    Post registerRating(Long postId);
+    Post createRating(Long postId);
 
     Post cancelRating(Long postId);
 

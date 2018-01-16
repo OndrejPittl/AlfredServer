@@ -17,27 +17,16 @@ public class CommentDTO {
     private String body;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date date;
+    private Date date = new Date();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date lastModified;
+    private Date lastModified = null;
 
-    private Long userId;
-
-    private Long postId;
-
+    private UserDTO user;
 
 
 
     public CommentDTO() {}
-
-    public CommentDTO(Long id, String body, Date date, Long userId, Long postId) {
-        this.id = id;
-        this.body = body;
-        this.date = date;
-        this.userId = userId;
-        this.postId = postId;
-    }
 
     public Long getId() {
         return id;
@@ -71,6 +60,15 @@ public class CommentDTO {
         this.lastModified = lastModified;
     }
 
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
+    /*
     public Long getUserId() {
         return userId;
     }
@@ -86,4 +84,5 @@ public class CommentDTO {
     public void setPostId(Long postId) {
         this.postId = postId;
     }
+    */
 }

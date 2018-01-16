@@ -44,12 +44,12 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Transactional
-    public Post registerRating(Long postId) {
+    public Post createRating(Long postId) {
         User user = this.userService.getAuthenticatedUser();
         Post post = this.postService.getPost(postId);
         Rating r =  new Rating(user, post);
-        this.ratingRepository.save(r);
-        return null;
+        this.ratingRepository.saveAndFlush(r);
+        return this.postService.getPost(postId);
     }
 
     @Transactional
@@ -59,7 +59,8 @@ public class RatingServiceImpl implements RatingService {
 
         for(Rating r : p.getRating()) {
             if(r.getPost().getId().equals(postId)) {
-                rId = r.getPost().getId();
+                //rId = r.getPost().getId();
+                rId = r.getId();
                 break;
             }
         }
@@ -67,8 +68,9 @@ public class RatingServiceImpl implements RatingService {
         if(rId != -1) {
             Dev.print("Removing rating ID " + rId);
             this.ratingRepository.removeById(rId);
+            this.ratingRepository.flush();
         }
 
-        return null;
+        return this.postService.getPost(postId);
     }
 }

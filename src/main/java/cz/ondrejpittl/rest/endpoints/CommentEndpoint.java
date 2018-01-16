@@ -5,6 +5,7 @@ import cz.ondrejpittl.business.services.CommentService;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.mappers.CommentRestMapper;
+import cz.ondrejpittl.persistence.domain.Comment;
 import cz.ondrejpittl.rest.dtos.CommentDTO;
 import cz.ondrejpittl.rest.dtos.PostDTO;
 
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @ApplicationScoped
 @Path("/comments")
@@ -64,7 +66,8 @@ public class CommentEndpoint {
     @Path("/post/{postId}")
     public Response createComment(@PathParam("postId") final Long postId, CommentDTO comment) {
         Dev.print("COMMENT POST: Endpoint reached.");
-        return Response.ok(commentService.createComment(postId, comment)).build();
+        List<Comment> comments = commentService.createComment(postId, comment);
+        return Response.ok(this.commentRestMapper.toDTOs(comments)).build();
     }
 
 
@@ -75,7 +78,7 @@ public class CommentEndpoint {
     @Path("/{id}")
     public Response modifyComment(@PathParam("id") final Long id, CommentDTO comment) {
         Dev.print("COMMENT PUT: Endpoint reached.");
-        return Response.ok(commentService.modifyComment(id, comment)).build();
+        return Response.ok(this.commentRestMapper.toDTOs(commentService.modifyComment(id, comment))).build();
     }
 
 
@@ -93,7 +96,7 @@ public class CommentEndpoint {
     @Path("/{id}")
     public Response removeComment(@PathParam("id") final Long id) {
         Dev.print("COMMENT DELETE: Endpoint reached.");
-        return Response.ok(commentService.removeComment(id)).build();
+        return Response.ok(this.commentRestMapper.toDTOs(commentService.removeComment(id))).build();
     }
 
 

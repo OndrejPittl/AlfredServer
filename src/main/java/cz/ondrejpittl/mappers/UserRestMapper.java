@@ -3,14 +3,12 @@ package cz.ondrejpittl.mappers;
 import cz.ondrejpittl.persistence.domain.Post;
 import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.PostDTO;
+import cz.ondrejpittl.rest.dtos.TagDTO;
 import cz.ondrejpittl.rest.dtos.UserDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @ApplicationScoped
 public class UserRestMapper {
@@ -18,17 +16,29 @@ public class UserRestMapper {
     @Inject
     PostRestMapper postMapper;
 
+
     public List<UserDTO> toDTOs(List<User> users) {
+        return this.toDTOs(users, true);
+    }
+
+    public List<UserDTO> toDTOs(List<User> users, boolean deep) {
         List<UserDTO> dtos = new ArrayList<>();
 
         for (User user : users) {
-            dtos.add(this.toDTO(user));
+            dtos.add(this.toDTO(user, deep));
         }
 
         return dtos;
     }
 
     public UserDTO toDTO(User user) {
+        return this.toDTO(user, true);
+    }
+
+    public UserDTO toDTO(User user, boolean deep) {
+
+        if(user == null) return null;
+
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
@@ -40,16 +50,20 @@ public class UserRestMapper {
         //dto.setPassword(user.getPassword());
         dto.setToken(user.getToken());
 
+        if(!deep) return dto;
+
         if (user.getPosts() != null) {
-            dto.setPosts(new HashSet<PostDTO>(){{
-                for (Post post : user.getPosts()) {
-                    add(postMapper.toDTO(post));
-                }
-            }});
+            Set<PostDTO> posts = new LinkedHashSet<>();
+            for (Post post : user.getPosts()) {
+                posts.add(postMapper.toDTO(post));
+            }
+            dto.setPosts(posts);
         }
 
         return dto;
     }
+
+
 
     public User fromDTO(UserDTO dto) {
         User user = new User();

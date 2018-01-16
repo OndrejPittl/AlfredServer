@@ -22,9 +22,9 @@ public interface PostService {
 
     Post getPost(Long id);
 
-    Post createPost(PostDTO dto);
+    List<Post> createPost(PostDTO dto);
 
-    Post removePost(Long id);
+    List<Post> removePost(Long id);
 
     Post modifyPost(Long id, PostDTO dto);
 
@@ -35,4 +35,5 @@ public interface PostService {
     List<Post> getUserRatedPosts(int offset);
 
     List<Post> getUserFriendsPosts(int offset);
+
 }

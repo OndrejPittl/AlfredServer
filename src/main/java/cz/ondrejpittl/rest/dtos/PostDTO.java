@@ -3,6 +3,7 @@ package cz.ondrejpittl.rest.dtos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import cz.ondrejpittl.persistence.domain.Rating;
 import cz.ondrejpittl.persistence.domain.Tag;
 
 import java.util.Date;
@@ -16,10 +17,10 @@ public class PostDTO {
      */
     private Long id;
 
-    /**
-     * User ID.
-     */
-    private Long userId;
+//    /**
+//     * User ID.
+//     */
+    //private Long userId;
 
     /**
      * Post title.
@@ -46,23 +47,34 @@ public class PostDTO {
      */
     private Date lastModified;
 
+
+    private UserDTO user;
+
+
     private Set<TagDTO> tags;
 
     private Set<CommentDTO> comments;
 
+    /*
+    private Long rating;
+
+    private boolean userRated;
+    */
+
+    private List<Long> rating;
 
 
-    public PostDTO() {
 
-    }
+    public PostDTO() { }
 
+    /*
     public PostDTO(Long id, Long userId, String title, String body, String image, Date date) {
         this(id, userId, title, body, image, date, null, null);
     }
 
     public PostDTO(Long id, Long userId, String title, String body, String image, Date date, Set<TagDTO> tags, Set<CommentDTO> comments) {
         this.id = id;
-        this.userId = userId;
+        //this.userId = userId;
         this.title = title;
         this.body = body;
         this.image = image;
@@ -70,6 +82,7 @@ public class PostDTO {
         this.tags = tags;
         this.comments = comments;
     }
+    */
 
     public Long getId() {
         return id;
@@ -79,6 +92,7 @@ public class PostDTO {
         this.id = id;
     }
 
+    /*
     public Long getUserId() {
         return userId;
     }
@@ -86,6 +100,7 @@ public class PostDTO {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+    */
 
     public String getTitle() {
         return title;
@@ -127,6 +142,14 @@ public class PostDTO {
         this.lastModified = lastModified;
     }
 
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
     public Set<TagDTO> getTags() {
         return tags;
     }
@@ -142,6 +165,33 @@ public class PostDTO {
     public void setComments(Set<CommentDTO> comments) {
         this.comments = comments;
     }
+
+    public List<Long> getRating() {
+        return rating;
+    }
+
+    public void setRating(List<Long> rating) {
+        this.rating = rating;
+    }
+
+    /*
+    public Long getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
+    }
+
+    public boolean isUserRated() {
+        return userRated;
+    }
+
+    public void setUserRated(boolean userRated) {
+        this.userRated = userRated;
+    }
+
+    */
 
     @Override
     public String toString() {

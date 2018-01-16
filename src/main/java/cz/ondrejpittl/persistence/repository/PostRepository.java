@@ -25,7 +25,7 @@ public interface PostRepository extends EntityRepository<Post, Long> {
     // where p.image isNotNull
 
 
-    List<Post> findAllOrderByDate();
+    //List<Post> findAllOrderByDate();
 
 
 
@@ -46,7 +46,7 @@ public interface PostRepository extends EntityRepository<Post, Long> {
 
 
     // general
-    List<Post> findAllOrderByDate(@FirstResult int start, @MaxResults int pageSize);
+    List<Post> findAllOrderByDateDesc(@FirstResult int start, @MaxResults int pageSize);
 
     // general – where tag + rating + photo
     @Query("select p from Post as p where :tag in (select t_tag.name from Post as p_tag left outer join p_tag.tags as t_tag where p_tag.id = p.id group by p_tag.id) and (select count(r_rating.id) from Post as p_rating left outer join p_rating.rating as r_rating where p_rating.id = p.id group by p_rating.id) >= :rating and p.image is not null order by p.date")

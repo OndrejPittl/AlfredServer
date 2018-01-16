@@ -74,6 +74,7 @@ public class Post {
         joinColumns = { @JoinColumn(name = "postId", referencedColumnName = "id") },
         inverseJoinColumns = { @JoinColumn(name = "tagId", referencedColumnName = "id") }
     )
+    @OrderBy("name ASC")
     private Set<Tag> tags = new HashSet<>();
 
 
@@ -84,6 +85,7 @@ public class Post {
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL
     )
+    @OrderBy("date ASC")
     private Set<Comment> comments = new HashSet<>();
 
 
@@ -95,6 +97,7 @@ public class Post {
             cascade = CascadeType.ALL
     )
     private Set<Rating> rating = new HashSet<>();
+
 
 
     /*
@@ -222,6 +225,9 @@ public class Post {
     public void setRating(Set<Rating> rating) {
         this.rating = rating;
     }
+
+
+
 
     public void addTag(Tag tag) {
         // many-to-many => many-posts – many-tags

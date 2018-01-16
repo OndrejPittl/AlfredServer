@@ -1,20 +1,18 @@
 package cz.ondrejpittl.mappers;
 
+import cz.ondrejpittl.business.services.AuthService;
 import cz.ondrejpittl.business.services.TagService;
 import cz.ondrejpittl.dev.Dev;
-import cz.ondrejpittl.persistence.domain.Comment;
-import cz.ondrejpittl.persistence.domain.Post;
-import cz.ondrejpittl.persistence.domain.Tag;
-import cz.ondrejpittl.persistence.domain.User;
+import cz.ondrejpittl.persistence.domain.*;
 import cz.ondrejpittl.persistence.repository.UserRepository;
 import cz.ondrejpittl.rest.dtos.CommentDTO;
 import cz.ondrejpittl.rest.dtos.PostDTO;
 import cz.ondrejpittl.rest.dtos.TagDTO;
-import cz.ondrejpittl.rest.dtos.UserDTO;
-import org.omg.IOP.TAG_RMI_CUSTOM_MAX_STREAM_FORMAT;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.*;
 
 @ApplicationScoped
@@ -32,43 +30,76 @@ public class PostRestMapper {
     @Inject
     CommentRestMapper commentMapper;
 
+    @Inject
+    UserRestMapper userMapper;
+
+    @Inject
+    AuthService authService;
+
+
+
     public List<PostDTO> toDTOs(List<Post> posts) {
+        return this.toDTOs(posts, true);
+    }
+
+    public List<PostDTO> toDTOs(List<Post> posts, boolean deep) {
         List<PostDTO> dtos = new ArrayList<>();
 
         for (Post post : posts) {
-            dtos.add(this.toDTO(post));
+            dtos.add(this.toDTO(post, deep));
         }
 
         return dtos;
     }
 
     public PostDTO toDTO(Post post) {
+        return this.toDTO(post, true);
+    }
+
+    public PostDTO toDTO(Post post, boolean deep) {
         PostDTO dto = new PostDTO();
         dto.setId(post.getId());
-        dto.setUserId(post.getUser().getId());
+        dto.setUser(this.userMapper.toDTO(post.getUser(), false));
         dto.setTitle(post.getTitle());
         dto.setBody(post.getBody());
         dto.setImage(post.getImage());
         dto.setDate(post.getDate());
         dto.setLastModified(post.getLastModified());
 
+
         if (post.getTags() != null) {
-            dto.setTags(new HashSet<TagDTO>(){{
-                for (Tag tag : post.getTags()) {
-                    add(tagMapper.toDTO(tag));
-                }
-            }});
+            Set<TagDTO> tags = new LinkedHashSet<>();
+            for (Tag tag : post.getTags()) {
+                tags.add(tagMapper.toDTO(tag));
+            }
+            dto.setTags(tags);
         }
 
-        /*
-        if (post.getComments() != null) {
-            dto.setComments(new HashSet<CommentDTO>(){{
-                for (Comment comment : post.getComments()) {
-                    add(commentMapper.toDTO(comment));
-                }
-            }});
+        if (post.getRating() != null) {
+            List<Long> ratings = new ArrayList<>();
+            for(Rating r : post.getRating()) {
+                ratings.add(r.getUser().getId());
+            }
+            dto.setRating(ratings);
         }
-        */
+
+
+
+        if(!deep) return dto;
+
+
+        if (post.getComments() != null) {
+            //Dev.printObject(post.getComments());
+            //Set<CommentDTO> comments = new HashSet<>();
+            Set<CommentDTO> comments = new LinkedHashSet<>();
+            for (Comment comment : post.getComments()) {
+                //Dev.print("Iterating comment: " + comment.getId());
+                comments.add(commentMapper.toDTO(comment));
+                //Dev.printObject(comments);
+            }
+            dto.setComments(comments);
+            //Dev.printObject(dto.getComments());
+        }
 
         return dto;
     }
@@ -79,7 +110,7 @@ public class PostRestMapper {
         if(dto.getBody() != null)   post.setBody(dto.getBody());
         if(dto.getImage() != null)  post.setImage(dto.getImage());
         if(dto.getDate() != null)   post.setDate(dto.getDate());
-        if(dto.getLastModified() != null)   post.setLastModified(dto.getLastModified());
+        //if(dto.getLastModified() != null)   post.setLastModified(dto.getLastModified());
 
         if (dto.getTags() != null) {
             post.setTags(new HashSet<Tag>(){{
@@ -89,15 +120,12 @@ public class PostRestMapper {
             }});
         }
 
-
-
         /*
         if(dto.getUserId() != null) {
             User user = userRepository.findBy(dto.getUserId());
             user.addPost(post);
         }
         */
-
 
         /*
         Comment c1 = new Comment("abcd", new Date());

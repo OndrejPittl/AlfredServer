@@ -10,9 +10,7 @@ import cz.ondrejpittl.rest.dtos.CommentDTO;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @ApplicationScoped
 public class CommentServiceImpl implements CommentService {
@@ -45,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Transactional
-    public Comment createComment(Long postId, CommentDTO comment) {
+    public List<Comment> createComment(Long postId, CommentDTO comment) {
         Comment c = commentMapper.fromDTO(comment);
 
         User u = this.userService.getUser(this.authenticatedUser.getUserId());
@@ -54,16 +52,19 @@ public class CommentServiceImpl implements CommentService {
         c.setUser(u);
         c.setPost(p);
 
-        return commentRepository.save(c);
+        commentRepository.saveAndFlush(c);
+
+        return new ArrayList<>(this.postService.getPost(postId).getComments());
     }
 
     @Transactional
-    public Comment modifyComment(Long id, CommentDTO dto) {
+    public List<Comment> modifyComment(Long id, CommentDTO dto) {
         Comment comment = commentRepository.findBy(id);
         Comment c = commentMapper.fromDTO(dto);
+        Long postId = comment.getPost().getId();
         boolean modified = false;
 
-        if(c.getBody() != comment.getBody()) {
+        if(!c.getBody().equals(comment.getBody())) {
             comment.setBody(c.getBody());
             modified = true;
         }
@@ -72,13 +73,26 @@ public class CommentServiceImpl implements CommentService {
             comment.setLastModified(new Date());
         }
 
-        return this.commentRepository.save(comment);
+        this.commentRepository.saveAndFlush(comment);
+        return new ArrayList<>(this.postService.getPost(postId).getComments());
+    }
+
+
+    public void removePostComments(List<Long> comIDs) {
+        int num = this.commentRepository.removePostComments(comIDs);
+        this.commentRepository.flush();
+        Dev.print("Deleted " + num + " comments of post.");
     }
 
     @Transactional
-    public Comment removeComment(Long commentId) {
+    public List<Comment> removeComment(Long commentId) {
         Dev.print("COMMENT DELETE: Removing comment ID " + commentId);
+
+        Comment c = this.commentRepository.findBy(commentId);
+        Long postId = c.getPost().getId();
         this.commentRepository.removeById(commentId);
-        return null;
+        this.commentRepository.flush();
+        Set<Comment> comments = this.postService.getPost(postId).getComments();
+        return new ArrayList<>(comments);
     }
 }

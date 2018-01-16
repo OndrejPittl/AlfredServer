@@ -6,9 +6,12 @@ import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.services.CommentService;
 import cz.ondrejpittl.business.services.PostService;
 import cz.ondrejpittl.business.services.RatingService;
+import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.mappers.PostRestMapper;
+import cz.ondrejpittl.persistence.domain.Post;
+import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.PostDTO;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,6 +22,7 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @ApplicationScoped
 @Path("/posts")
@@ -34,6 +38,9 @@ public class PostEndpoint {
 
     @Inject
     private RatingService ratingService;
+
+    @Inject
+    private UserService userService;
 
 
     @Inject
@@ -63,13 +70,7 @@ public class PostEndpoint {
 
             @QueryParam("photo") boolean hasPhoto) {
 
-        Dev.print("---__---__---__---__---");
-        Dev.print(offset);
-        Dev.print(tag);
-        Dev.print(rating);
-        Dev.print(hasPhoto);
-
-        return Response.ok(postRestMapper.toDTOs(postService.getPosts(offset, tag, rating, hasPhoto))).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getPosts(offset, tag, rating, hasPhoto), false)).build();
     }
 
     /**
@@ -79,7 +80,7 @@ public class PostEndpoint {
     @GET
     @Path("/all")
     public Response getPosts() {
-        return Response.ok(postRestMapper.toDTOs(postService.getPosts())).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getPosts(), false)).build();
     }
 
     /**
@@ -93,7 +94,10 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id) {
-        return Response.ok(postRestMapper.toDTO(postService.getPost(id))).build();
+
+        Post p = postService.getPost(id);
+        PostDTO dto = postRestMapper.toDTO(p);
+        return Response.ok(dto).build();
     }
 
     /**
@@ -110,7 +114,7 @@ public class PostEndpoint {
 
             @QueryParam("offset")
             @Min(value = 0, message = "post.offset.negative") int offset) {
-        return Response.ok(postRestMapper.toDTOs(postService.getUserPosts(userId, offset))).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getUserPosts(userId, offset), false)).build();
     }
 
     @GET
@@ -119,7 +123,7 @@ public class PostEndpoint {
     public Response getUserRatedPosts (
             @QueryParam("offset")
             @Min(value = 0, message = "post.offset.negative") int offset) {
-        return Response.ok(postRestMapper.toDTOs(postService.getUserRatedPosts(offset))).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getUserRatedPosts(offset), false)).build();
     }
 
     @GET
@@ -128,7 +132,7 @@ public class PostEndpoint {
     public Response getUserFriendsPosts(
             @QueryParam("offset")
             @Min(value = 0, message = "post.offset.negative") int offset) {
-        return Response.ok(postRestMapper.toDTOs(postService.getUserFriendsPosts(offset))).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getUserFriendsPosts(offset), false)).build();
     }
 
     /**
@@ -144,7 +148,7 @@ public class PostEndpoint {
 
             @QueryParam("offset")
             @Min(value = 0, message = "post.offset.negative") int offset) {
-        return Response.ok(postRestMapper.toDTOs(postService.getTagPosts(tag, offset))).build();
+        return Response.ok(postRestMapper.toDTOs(postService.getTagPosts(tag, offset), false)).build();
     }
 
 
@@ -156,9 +160,12 @@ public class PostEndpoint {
      * @return      DTO response
      */
     @POST
-    @Secured
-    public Response createPost(@Valid PostDTO post) {
-        return Response.ok(postService.createPost(post)).build();
+    @Secured    //@Valid
+    public Response createPost(PostDTO post) {
+        Dev.print("Create Post Endpoint reached!");
+        Dev.printObject(post);
+        List<Post> posts = postService.createPost(post);
+        return Response.ok(this.postRestMapper.toDTOs(posts)).build();
     }
 
 
@@ -174,7 +181,11 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id) {
-        return Response.ok(ratingService.registerRating(id)).build();
+
+        Post post = ratingService.createRating(id);
+        PostDTO dto = this.postRestMapper.toDTO(post);
+
+        return Response.ok(dto).build();
     }
 
 
@@ -188,7 +199,7 @@ public class PostEndpoint {
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id, PostDTO post) {
         Dev.print("POST PUT: Endpoint reached.");
-        return Response.ok(postService.modifyPost(id, post)).build();
+        return Response.ok(this.postRestMapper.toDTO(postService.modifyPost(id, post))).build();
     }
 
 
@@ -206,7 +217,10 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id) {
-        return Response.ok(postService.removePost(id)).build();
+
+        List<Post> posts = postService.removePost(id);
+        List<PostDTO> dtos = this.postRestMapper.toDTOs(posts);
+        return Response.ok(dtos).build();
     }
 
 
@@ -222,6 +236,11 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id) {
-        return Response.ok(ratingService.cancelRating(id)).build();
+
+        Post post = ratingService.cancelRating(id);
+        PostDTO dto = this.postRestMapper.toDTO(post);
+        //dto.setUserRated(false);
+
+        return Response.ok(dto).build();
     }
 }

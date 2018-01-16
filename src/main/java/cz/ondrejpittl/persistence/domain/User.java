@@ -97,7 +97,7 @@ public class User {
         fetch = FetchType.EAGER,
         cascade = { CascadeType.MERGE }
     )
-    @OrderBy("date")
+    @OrderBy("date DESC")
     private Set<Post> posts = new HashSet<Post>();
 
 
@@ -140,7 +140,7 @@ public class User {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    @OrderBy("date")
+    @OrderBy("date ASC")
     private Set<Rating> rated = new HashSet<>();
 
     /*

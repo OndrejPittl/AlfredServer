@@ -25,6 +25,9 @@ public class CommentRestMapper {
     @Inject
     private PostRepository postRepository;
 
+    @Inject
+    private UserRestMapper userMapper;
+
 
     public List<CommentDTO> toDTOs(List<Comment> comments) {
         List<CommentDTO> dtos = new ArrayList<>();
@@ -42,8 +45,7 @@ public class CommentRestMapper {
         dto.setBody(comment.getBody());
         dto.setDate(comment.getDate());
         dto.setLastModified(comment.getLastModified());
-        dto.setUserId(comment.getUser().getId());
-        dto.setPostId(comment.getPost().getId());
+        dto.setUser(userMapper.toDTO(comment.getUser(), false));
         return dto;
     }
 
@@ -51,10 +53,8 @@ public class CommentRestMapper {
         Comment comment = new Comment();
         comment.setId(dto.getId());
         comment.setBody(dto.getBody());
-        comment.setDate(dto.getDate());
-        comment.setLastModified(dto.getLastModified());
-        //comment.setUser(userRepository.findBy(dto.getUserId()));
-        //comment.setPost(postRepository.findBy(dto.getPostId()));
+        //comment.setDate(dto.getDate());
+        //comment.setLastModified(dto.getLastModified());
         return comment;
     }
 }

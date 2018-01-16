@@ -25,7 +25,7 @@ public class Comment {
     /**
      * Comment last modification. DATETIME
      */
-    private Date lastModified;
+    private Date lastModified = null;
 
 
     @ManyToOne(

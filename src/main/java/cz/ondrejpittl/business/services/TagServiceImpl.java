@@ -76,6 +76,7 @@ public class TagServiceImpl implements TagService {
             removedCount++;
         }
 
+        this.tagRepository.flush();
         return removedCount;
     }
 

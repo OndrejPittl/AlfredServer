@@ -45,7 +45,7 @@ public class UserEndpoint {
      */
     @GET
     public Response getAllActiveUsers() {
-        return Response.ok(userRestMapper.toDTOs(userService.getAllActiveUsers())).build();
+        return Response.ok(userRestMapper.toDTOs(userService.getAllActiveUsers(), false)).build();
     }
 
     /**
@@ -55,7 +55,7 @@ public class UserEndpoint {
     @GET
     @Path("/all")
     public Response getAllUsers() {
-        return Response.ok(userRestMapper.toDTOs(userService.getAllUsers())).build();
+        return Response.ok(userRestMapper.toDTOs(userService.getAllUsers(), false)).build();
     }
 
     /**
@@ -73,18 +73,19 @@ public class UserEndpoint {
         User u = userService.getUser(id);
 
         if(u == null) {
-            //throw new WebApplicationException(Response.Status.NOT_FOUND);
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         return Response.ok(userRestMapper.toDTO(u)).build();
     }
 
+    /*
     @GET
     @Path("/findPostsOfUsers")
     public Response test() {
         return Response.ok(userRestMapper.toDTOs(this.userService.test())).build();
     }
+    */
 
     /**
      * Get specific user defined by slug.

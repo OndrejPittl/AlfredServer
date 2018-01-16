@@ -49,10 +49,12 @@ public class Tag {
         return ((Tag) obj).getName().equals(this.name);
     }
 
+    /*
     @Override
     public int hashCode() {
         return this.name.hashCode();
     }
+    */
 
     public Long getId() {
         return id;

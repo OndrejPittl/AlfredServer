@@ -4,6 +4,7 @@ import cz.ondrejpittl.business.annotations.AuthenticatedUser;
 import cz.ondrejpittl.business.annotations.Secured;
 import cz.ondrejpittl.business.cfg.Config;
 import cz.ondrejpittl.business.services.AuthService;
+import cz.ondrejpittl.dev.Dev;
 
 import javax.annotation.Priority;
 import javax.enterprise.event.Event;
@@ -21,7 +22,7 @@ import java.io.IOException;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthFilter implements ContainerRequestFilter {
 
-    private static final String AUTH_SCHEME = "Bearer";
+    public static final String AUTH_SCHEME = "Bearer";
 
     @Inject
     private AuthService authService;
@@ -39,7 +40,7 @@ public class AuthFilter implements ContainerRequestFilter {
         String authHeader = reqContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
         // validate auth header
-        if (!validateAuthHeader(authHeader)) {
+        if (!this.validateAuthHeader(authHeader)) {
             abortUnauthorized(reqContext);
             return;
         }
@@ -50,7 +51,7 @@ public class AuthFilter implements ContainerRequestFilter {
         try {
 
             // validate token
-            validateToken(token);
+            this.validateToken(token);
 
             // --- user auth succeeded ---
             this.userAuthenticatedEvent.fire(token);
@@ -80,9 +81,11 @@ public class AuthFilter implements ContainerRequestFilter {
     /**
      * Validates token.
      */
-    private void validateToken(String token) throws Exception {
+    public boolean validateToken(String token) throws Exception {
         if(this.authService.authenticate(token) == null) {
             throw new Exception();
         }
+
+        return true;
     }
 }

@@ -1,7 +1,9 @@
 package cz.ondrejpittl.business.services;
 
 import cz.ondrejpittl.dev.Dev;
+import cz.ondrejpittl.filters.AuthFilter;
 import cz.ondrejpittl.persistence.domain.Identity;
+import cz.ondrejpittl.persistence.domain.Post;
 import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.persistence.repository.UserRepository;
 import cz.ondrejpittl.rest.dtos.TokenDTO;
@@ -12,7 +14,10 @@ import io.undertow.util.DateUtils;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.HttpHeaders;
 import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +34,6 @@ public class AuthServiceImpl implements AuthService {
     private UserService userService;
 
     private Map<String, Identity> sessionUsers;
-
 
 
 
@@ -96,4 +100,5 @@ public class AuthServiceImpl implements AuthService {
 
         return this.sessionUsers.get(token);
     }
+
 }

@@ -3,15 +3,17 @@ package cz.ondrejpittl.business.services;
 import cz.ondrejpittl.business.cfg.Config;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.PostRestMapper;
-import cz.ondrejpittl.persistence.domain.Post;
-import cz.ondrejpittl.persistence.domain.Tag;
-import cz.ondrejpittl.persistence.domain.User;
+import cz.ondrejpittl.persistence.domain.*;
 import cz.ondrejpittl.persistence.repository.PostRepository;
 import cz.ondrejpittl.rest.dtos.PostDTO;
+import org.apache.deltaspike.data.api.Modifying;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.*;
 
 @ApplicationScoped
@@ -29,13 +31,23 @@ public class PostServiceImpl implements PostService {
     @Inject
     UserService userService;
 
+    @Inject
+    AuthService authService;
+
+    @Inject
+    CommentService commentService;
+
+
+
+
+
 
     public List<Post> getPosts() {
-        return this.postRepository.findAllOrderByDate();
+        return this.postRepository.findAll();
     }
 
     public List<Post> getPosts(int offset) {
-        return this.postRepository.findAllOrderByDate(offset, Config.POST_LIMIT);
+        return this.postRepository.findAllOrderByDateDesc(offset, Config.POST_LIMIT);
     }
 
     public List<Post> getUserPosts(Long userId) {
@@ -91,7 +103,7 @@ public class PostServiceImpl implements PostService {
             return this.postRepository.findPostFilteredByPhoto(offset, Config.POST_LIMIT);
         }
 
-        return this.postRepository.findAllOrderByDate(offset, Config.POST_LIMIT);
+        return this.postRepository.findAllOrderByDateDesc(offset, Config.POST_LIMIT);
     }
 
     public Post getPost(Long id) {
@@ -99,22 +111,38 @@ public class PostServiceImpl implements PostService {
     }
 
     @Transactional
-    public Post createPost(PostDTO dto) {
+    public List<Post> createPost(PostDTO dto) {
         Post p = postMapper.fromDTO(dto);
         User u = this.userService.getAuthenticatedUser();
+
         p.setUser(u);
-        return postRepository.save(p);
+
+        this.postRepository.saveAndFlush(p);
+        return this.getPosts(0);
     }
 
     @Transactional
-    public Post removePost(Long id) {
+    public List<Post> removePost(Long id) {
         Dev.print("POST DELETE: Looking for Post ID " + id);
-        Set<Tag> tags = this.postRepository.findBy(id).getTags();
+
+        Post post = this.postRepository.findBy(id);
+        Set<Tag> tags = post.getTags();
+
+        List<Long> comIDs = new ArrayList<>();
+        for(Comment c : post.getComments()) {
+            comIDs.add(c.getId());
+        }
+
+        this.commentService.removePostComments(comIDs);
+
         Dev.print("POST DELETE: Removing Post ID " + id);
 
         this.postRepository.removeById(id);
+        this.postRepository.flush();
+
         this.tagService.removeOrphans(tags);
-        return null;
+
+        return this.getPosts(0);
     }
 
     @Transactional
@@ -173,8 +201,6 @@ public class PostServiceImpl implements PostService {
         if(prevTags != null) {
             this.tagService.removeOrphans(prevTags);
         }
-
-
 
         return orig;
     }
