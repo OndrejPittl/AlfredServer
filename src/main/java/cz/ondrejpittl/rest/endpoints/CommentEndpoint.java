@@ -65,7 +65,7 @@ public class CommentEndpoint {
     @Secured
     @Path("/post/{postId}")
     public Response createComment(@PathParam("postId") final Long postId, CommentDTO comment) {
-        Dev.print("COMMENT POST: Endpoint reached.");
+        //Dev.print("COMMENT POST: Endpoint reached.");
         List<Comment> comments = commentService.createComment(postId, comment);
         return Response.ok(this.commentRestMapper.toDTOs(comments)).build();
     }
@@ -77,7 +77,7 @@ public class CommentEndpoint {
     @Secured
     @Path("/{id}")
     public Response modifyComment(@PathParam("id") final Long id, CommentDTO comment) {
-        Dev.print("COMMENT PUT: Endpoint reached.");
+        //Dev.print("COMMENT PUT: Endpoint reached.");
         return Response.ok(this.commentRestMapper.toDTOs(commentService.modifyComment(id, comment))).build();
     }
 
@@ -95,7 +95,7 @@ public class CommentEndpoint {
     @Secured
     @Path("/{id}")
     public Response removeComment(@PathParam("id") final Long id) {
-        Dev.print("COMMENT DELETE: Endpoint reached.");
+        //Dev.print("COMMENT DELETE: Endpoint reached.");
         return Response.ok(this.commentRestMapper.toDTOs(commentService.removeComment(id))).build();
     }
 

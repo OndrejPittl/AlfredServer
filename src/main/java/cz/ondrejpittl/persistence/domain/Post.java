@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.ondrejpittl.dev.Dev;
-import javafx.geometry.Pos;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -51,7 +48,7 @@ public class Post {
     /**
      * Post image. TEXT
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String image;
 
     /**

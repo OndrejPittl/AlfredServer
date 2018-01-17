@@ -89,7 +89,7 @@ public class UserDTO {
     /**
      * Profile photo.
      */
-    private String photo;
+    private String photo = "https://goo.gl/uJ7SMr";
 
     /**
      * URL profile slug.
@@ -304,10 +304,10 @@ public class UserDTO {
     )
     private boolean checkPwdEquality() {
         boolean rs = this.password == null || this.password.equals(this.confirmPassword);
-        Dev.print("Checking passwords");
-        Dev.printObject(this.password);
-        Dev.printObject(this.confirmPassword);
-        Dev.printObject(rs);
+        //Dev.print("Checking passwords");
+        //Dev.printObject(this.password);
+        //Dev.printObject(this.confirmPassword);
+        //Dev.printObject(rs);
         return rs;
     }
     */

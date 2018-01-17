@@ -106,7 +106,6 @@ public class PostRestMapper {
         if(dto.getBody() != null)   post.setBody(dto.getBody());
         if(dto.getImage() != null)  post.setImage(dto.getImage());
         if(dto.getDate() != null)   post.setDate(dto.getDate());
-        //if(dto.getLastModified() != null)   post.setLastModified(dto.getLastModified());
 
         if (dto.getTags() != null) {
             post.setTags(new HashSet<Tag>(){{

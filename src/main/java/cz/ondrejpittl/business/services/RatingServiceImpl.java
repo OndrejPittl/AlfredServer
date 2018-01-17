@@ -66,7 +66,7 @@ public class RatingServiceImpl implements RatingService {
         }
 
         if(rId != -1) {
-            Dev.print("Removing rating ID " + rId);
+            //Dev.print("Removing rating ID " + rId);
             this.ratingRepository.removeById(rId);
             this.ratingRepository.flush();
         }

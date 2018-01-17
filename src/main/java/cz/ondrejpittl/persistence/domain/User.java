@@ -357,7 +357,7 @@ public class User {
         //      –> f.getUser() = request initiator –> f.getUser() == friendId
         for(Friendship f : this.friendedBy) {
             if(f.getUser().getId().equals(friendId) && !f.getUser().isDisabled()) {
-                Dev.print("Found friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
+                //Dev.print("Found friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
                 friendship = f;
                 break;
             }
@@ -367,7 +367,7 @@ public class User {
             return false;
         }
 
-        Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
+        //Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
         friendship.approve();
         return true;
     }
@@ -383,7 +383,7 @@ public class User {
         // incoming friend requests
         for(Friendship f : this.friendedBy) {
             if(f.getUser().getId().equals(friendId)) {
-                Dev.print("Found incoming friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
+                //Dev.print("Found incoming friend request from " + f.getUser().getEmail() + " ID " + f.getUser().getId() + ", looking for ID " + friendId);
                 friendship = f;
                 //this.friendedBy.remove(friendship);
                 break;
@@ -394,7 +394,7 @@ public class User {
         if(friendship == null) {
             for(Friendship f : this.friendWith) {
                 if(f.getFriend().getId().equals(friendId)) {
-                    Dev.print("Found outcoming friend request from " + f.getFriend().getEmail() + " ID " + f.getFriend().getId() + ", looking for ID " + friendId);
+                    //Dev.print("Found outcoming friend request from " + f.getFriend().getEmail() + " ID " + f.getFriend().getId() + ", looking for ID " + friendId);
                     friendship = f;
                     //this.friendWith.remove(friendship);
                     break;
@@ -403,7 +403,7 @@ public class User {
         }
 
         if(friendship != null) {
-            Dev.print("Found friendship: " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
+            //Dev.print("Found friendship: " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
         }
 
         return friendship;

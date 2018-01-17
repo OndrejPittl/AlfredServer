@@ -72,19 +72,19 @@ public class PostServiceImpl implements PostService {
         List<User> friends = user.getFriends();
 
         if(friends.size() <= 0) {
-            Dev.print("You have no friends.");
+            //Dev.print("You have no friends.");
             return new ArrayList<>();
         }
 
 
-        Dev.print("Staling your friends, " + user.getFirstName());
+        //Dev.print("Staling your friends, " + user.getFirstName());
 
         List<Long> ids = new LinkedList<>();
         for (User u : friends) ids.add(u.getId());
 
-        Dev.printObject(ids);
+        //Dev.printObject(ids);
         List<Post> posts = this.postRepository.findPostsOfUsers(ids, offset, Config.POST_LIMIT);;
-        Dev.printObject(posts);
+        //Dev.printObject(posts);
 
         return posts;
     }
@@ -135,7 +135,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     public List<Post> removePost(Long id) {
-        Dev.print("POST DELETE: Looking for Post ID " + id);
+        //Dev.print("POST DELETE: Looking for Post ID " + id);
 
         Post post = this.postRepository.findBy(id);
         Set<Tag> tags = post.getTags();
@@ -147,7 +147,7 @@ public class PostServiceImpl implements PostService {
 
         this.commentService.removePostComments(comIDs);
 
-        Dev.print("POST DELETE: Removing Post ID " + id);
+        //Dev.print("POST DELETE: Removing Post ID " + id);
 
         this.postRepository.removeById(id);
         this.postRepository.flush();
@@ -163,9 +163,9 @@ public class PostServiceImpl implements PostService {
         Post p = this.postMapper.fromDTO(dto);
         Set<Tag> prevTags = null;
 
-        Dev.print("POST PUT: Looking fot Post ID " + id);
+        //Dev.print("POST PUT: Looking fot Post ID " + id);
         Post orig = this.getPost(id);
-        Dev.print("POST PUT: Modifying Post ID " + id);
+        //Dev.print("POST PUT: Modifying Post ID " + id);
 
 
         if(orig == null) {

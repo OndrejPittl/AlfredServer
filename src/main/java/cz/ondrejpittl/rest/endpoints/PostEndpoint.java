@@ -12,12 +12,12 @@ import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.CommentRestMapper;
 import cz.ondrejpittl.mappers.PostRestMapper;
 import cz.ondrejpittl.persistence.domain.Post;
-import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.PostDTO;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import javax.ws.rs.*;
@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 @Path("/posts")
@@ -164,8 +165,8 @@ public class PostEndpoint {
     @POST
     @Secured    //@Valid
     public Response createPost(PostDTO post) {
-        Dev.print("Create Post Endpoint reached!");
-        Dev.printObject(post);
+        //Dev.print("Create Post Endpoint reached!");
+        //Dev.printObject(post);
         List<Post> posts = postService.createPost(post);
         return Response.ok(this.postRestMapper.toDTOs(posts)).build();
     }
@@ -191,13 +192,10 @@ public class PostEndpoint {
     }
 
 
-
-
-
     /*
 
     @POST
-    @Path("/{id}/fileupload ")
+    @Path("/{id}/fileupload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadPostImage(
             @PathParam("id") final Long id,
@@ -207,7 +205,7 @@ public class PostEndpoint {
 
         // image location
         String uploadedFileLocation = Config.IMAGES_DESTINATION + fileDetail.getFileName();
-        System.out.println(uploadedFileLocation);
+        //System.out.println(uploadedFileLocation);
 
 
         // save it
@@ -220,7 +218,7 @@ public class PostEndpoint {
 
         String output = "File saved to: " + uploadedFileLocation;
 
-        Dev.print(output);
+        //Dev.print(output);
 
         //return Response.status(200).entity(output).build();
         return Response.ok(new PostDTO()).build();
@@ -247,7 +245,19 @@ public class PostEndpoint {
     }
 
 
-    */
+
+
+    @Path("/uploadfile")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadFile(MultipartFormDataInput input) {
+        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        List<InputPart> inputParts = uploadForm.get("file");
+
+        return Response.ok().build();
+    }
+
+*/
 
 
 
@@ -261,7 +271,7 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id, PostDTO post) {
-        Dev.print("POST PUT: Endpoint reached.");
+        //Dev.print("POST PUT: Endpoint reached.");
         return Response.ok(this.postRestMapper.toDTO(postService.modifyPost(id, post))).build();
     }
 

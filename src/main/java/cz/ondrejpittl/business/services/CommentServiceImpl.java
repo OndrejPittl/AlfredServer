@@ -81,12 +81,12 @@ public class CommentServiceImpl implements CommentService {
     public void removePostComments(List<Long> comIDs) {
         int num = this.commentRepository.removePostComments(comIDs);
         this.commentRepository.flush();
-        Dev.print("Deleted " + num + " comments of post.");
+        //Dev.print("Deleted " + num + " comments of post.");
     }
 
     @Transactional
     public List<Comment> removeComment(Long commentId) {
-        Dev.print("COMMENT DELETE: Removing comment ID " + commentId);
+        //Dev.print("COMMENT DELETE: Removing comment ID " + commentId);
 
         Comment c = this.commentRepository.findBy(commentId);
         Long postId = c.getPost().getId();

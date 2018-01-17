@@ -10,8 +10,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.tools.internal.xjc.reader.Ring.add;
-
 @ApplicationScoped
 public class TagRestMapper {
 
@@ -42,6 +40,6 @@ public class TagRestMapper {
     }
 
     public Tag fromDTO(TagDTO dto) {
-        return service.getOrCreateTag(dto.getName());
+        return service.getOrCreateTag(dto.getName().toLowerCase());
     }
 }

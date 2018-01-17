@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
         Tag t = this.tagRepository.findByNameLikeOrderByNameAsc(tag);
 
         if(t == null) {
-            Dev.print("Tag " + tag + " not found. Creating a new one.");
+            //Dev.print("Tag " + tag + " not found. Creating a new one.");
             t = tagRepository.save(new Tag(tag));
             //t = new Tag(tag);
         }
@@ -54,7 +54,7 @@ public class TagServiceImpl implements TagService {
     }
 
     public int removeOrphans(Set<Tag> tags) {
-        Dev.print("POST DELETE: Checking Tag orphans.");
+        //Dev.print("POST DELETE: Checking Tag orphans.");
 
         int removedCount = 0;
 
@@ -64,14 +64,14 @@ public class TagServiceImpl implements TagService {
             Tag t = this.tagRepository.findBy(it.next().getId());
             boolean isOrphan = t.getPosts().size() <= 0;
 
-            Dev.printObject(t)  ;
+            //Dev.printObject(t)  ;
 
-            Dev.print("checking " + t.getName());
+            //Dev.print("checking " + t.getName());
 
             // not an orphan –> skip
             if(!isOrphan) continue;
 
-            Dev.print("POST DELETE: Tag ID " + t.getId() + "(" + t.getName() + ") is orphan. Removing.");
+            //Dev.print("POST DELETE: Tag ID " + t.getId() + "(" + t.getName() + ") is orphan. Removing.");
             this.tagRepository.removeById(t.getId());
             removedCount++;
         }
@@ -81,7 +81,7 @@ public class TagServiceImpl implements TagService {
     }
 
     public int removeOrphans() {
-        Dev.print("Checking Tag orphans.");
+        //Dev.print("Checking Tag orphans.");
 
         List<Tag> tags = this.tagRepository.findAll();
 

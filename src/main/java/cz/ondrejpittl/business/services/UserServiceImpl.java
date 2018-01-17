@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDTO dto) {
         User user = userMapper.fromDTO(dto);
 
-        Dev.print("----__-----");
-        Dev.printObject(user);
+        //Dev.print("----__-----");
+        //Dev.printObject(user);
 
         user.setSlug(this.buildUserSlug(user));
         user.setPassword(Encryptor.bcrypt(user.getPassword()));
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     public User modifyUser(UserDTO user) {
         Long uID = this.authenticatedUser.getUserId();
 
-        Dev.print("Modifying user with ID: " + uID);
+        //Dev.print("Modifying user with ID: " + uID);
 
         User u = this.getUser(uID);
 
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
     public boolean checkUserExists(String email, String hashedPwd) {
         Long count = this.userRepository.countUsers(email, hashedPwd);
 
-        Dev.print(count);
+        //Dev.print(count);
 
         return count == 1;
     }
