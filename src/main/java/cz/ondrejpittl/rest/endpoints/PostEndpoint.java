@@ -3,6 +3,7 @@ package cz.ondrejpittl.rest.endpoints;
 import cz.ondrejpittl.business.annotations.ExistingPost;
 import cz.ondrejpittl.business.annotations.ExistingUser;
 import cz.ondrejpittl.business.annotations.Secured;
+import cz.ondrejpittl.business.cfg.Config;
 import cz.ondrejpittl.business.services.CommentService;
 import cz.ondrejpittl.business.services.PostService;
 import cz.ondrejpittl.business.services.RatingService;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.*;
 import java.util.List;
 
 @ApplicationScoped
@@ -187,6 +189,67 @@ public class PostEndpoint {
 
         return Response.ok(dto).build();
     }
+
+
+
+
+
+    /*
+
+    @POST
+    @Path("/{id}/fileupload ")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadPostImage(
+            @PathParam("id") final Long id,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail) {
+
+
+        // image location
+        String uploadedFileLocation = Config.IMAGES_DESTINATION + fileDetail.getFileName();
+        System.out.println(uploadedFileLocation);
+
+
+        // save it
+        File objFile = new File(uploadedFileLocation);
+        if(objFile.exists()) {
+            objFile.delete();
+        }
+
+        saveToFile(uploadedInputStream, uploadedFileLocation);
+
+        String output = "File saved to: " + uploadedFileLocation;
+
+        Dev.print(output);
+
+        //return Response.status(200).entity(output).build();
+        return Response.ok(new PostDTO()).build();
+
+    }
+    private void saveToFile(InputStream uploadedInputStream,
+                            String uploadedFileLocation) {
+
+        try {
+            OutputStream out = null;
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            out = new FileOutputStream(new File(uploadedFileLocation));
+            while ((read = uploadedInputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    */
+
+
 
 
     // --------------- PUT ---------------
