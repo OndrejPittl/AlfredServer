@@ -88,17 +88,13 @@ public class PostRestMapper {
         if(!deep) return dto;
 
 
+
         if (post.getComments() != null) {
-            //Dev.printObject(post.getComments());
-            //Set<CommentDTO> comments = new HashSet<>();
             Set<CommentDTO> comments = new LinkedHashSet<>();
             for (Comment comment : post.getComments()) {
-                //Dev.print("Iterating comment: " + comment.getId());
                 comments.add(commentMapper.toDTO(comment));
-                //Dev.printObject(comments);
             }
             dto.setComments(comments);
-            //Dev.printObject(dto.getComments());
         }
 
         return dto;

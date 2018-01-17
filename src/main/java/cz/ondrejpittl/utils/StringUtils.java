@@ -9,4 +9,9 @@ public class StringUtils {
         return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
+    public static String stripTags(String str) {
+        String strRegEx = "<[^>]*>";
+        return str.replaceAll(strRegEx, "");
+    }
+
 }

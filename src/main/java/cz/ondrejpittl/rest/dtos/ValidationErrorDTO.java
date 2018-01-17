@@ -14,6 +14,12 @@ public class ValidationErrorDTO {
 
     public ValidationErrorDTO() {}
 
+    public ValidationErrorDTO(String field, String message, Object value) {
+        this.field = field;
+        this.message = message;
+        this.value = value;
+    }
+
     public String getField() {
         return field;
     }

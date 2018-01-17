@@ -72,7 +72,7 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         Friendship f = new Friendship(user, friend);
         this.friendshipRepository.saveAndFlush(f);
-        return null;
+        return this.userRepository.findById(friendId);
     }
 
     @Transactional
@@ -84,7 +84,8 @@ public class FriendshipServiceImpl implements FriendshipService {
             throw new WebApplicationException("Friend request not found.", Response.Status.NOT_FOUND);
         }
 
-        return this.userRepository.save(user);
+        this.userRepository.saveAndFlush(user);
+        return this.userRepository.findById(friendId);
     }
 
     @Transactional
@@ -98,6 +99,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         this.friendshipRepository.removeById(f.getId());
         this.friendshipRepository.flush();
-        return user;
+        return this.userRepository.findById(friendId);
     }
 }

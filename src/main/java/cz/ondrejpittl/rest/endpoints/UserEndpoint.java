@@ -6,9 +6,11 @@ import cz.ondrejpittl.business.services.FriendshipService;
 import cz.ondrejpittl.business.services.UserService;
 import cz.ondrejpittl.business.validation.CreateGroup;
 import cz.ondrejpittl.business.validation.ModifyGroup;
+import cz.ondrejpittl.business.validation.ValidationMessages;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.User;
 import cz.ondrejpittl.rest.dtos.UserDTO;
+import cz.ondrejpittl.rest.dtos.ValidationErrorDTO;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,6 +22,8 @@ import javax.validation.groups.Default;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 @Path("/users")
@@ -113,7 +117,14 @@ public class UserEndpoint {
      */
     @POST
     public Response createUser(@Valid @ConvertGroup(from = Default.class, to = CreateGroup.class) UserDTO user) {
-        return Response.ok(userService.createUser(user)).build();
+
+        if(!user.getCaptcha().equals("14")) {
+            List<ValidationErrorDTO> errors = new ArrayList<>();
+            errors.add(new ValidationErrorDTO("captcha", ValidationMessages.get("captcha"), user.getCaptcha()));
+            return Response.status(Response.Status.BAD_REQUEST).entity(errors).build();
+        }
+
+        return Response.ok(this.userRestMapper.toDTO(userService.createUser(user))).build();
     }
 
 
@@ -126,7 +137,7 @@ public class UserEndpoint {
     @Secured
     @Path("/{id}/friendship")
     public Response createFriendship(@PathParam("id") @Min(value = 1, message = "user.id.negative") @ExistingUser(message = "user.id.notfound") final Long id) {
-        return Response.ok(friendshipService.createFriendRequest(id)).build();
+        return Response.ok(this.userRestMapper.toDTO(friendshipService.createFriendRequest(id))).build();
     }
 
 
@@ -146,7 +157,7 @@ public class UserEndpoint {
     @Secured
     @Path("/{id}/friendship")
     public Response approveFriendship(@PathParam("id") @ExistingUser(message = "user.id.notfound") final Long id) {
-        return Response.ok(friendshipService.approveFriendRequest(id)).build();
+        return Response.ok(this.userRestMapper.toDTO(friendshipService.approveFriendRequest(id))).build();
     }
 
 
@@ -172,23 +183,7 @@ public class UserEndpoint {
     @Secured
     @Path("/{id}/friendship")
     public Response cancelFriendship(@PathParam("id") @ExistingUser(message = "user.id.notfound") final Long id) {
-        return Response.ok(friendshipService.cancelFriendship(id)).build();
+        return Response.ok(this.userRestMapper.toDTO(friendshipService.cancelFriendship(id))).build();
     }
 
-
-
-
-
-
-
-    // -----------------------------------------------------------------------------
-
-    /*
-    @GET
-    @Path("/init")
-    //TODO: initial mock data
-    public Response init() {
-        return Response.ok(userService.init()).build();
-    }
-    */
 }

@@ -1,6 +1,7 @@
 package cz.ondrejpittl.business.services;
 
 import cz.ondrejpittl.business.annotations.AuthenticatedUser;
+import cz.ondrejpittl.business.validation.ValidationMessages;
 import cz.ondrejpittl.dev.Dev;
 import cz.ondrejpittl.mappers.UserRestMapper;
 import cz.ondrejpittl.persistence.domain.*;
@@ -69,26 +70,17 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDTO dto) {
         User user = userMapper.fromDTO(dto);
 
+        Dev.print("----__-----");
+        Dev.printObject(user);
+
         user.setSlug(this.buildUserSlug(user));
         user.setPassword(Encryptor.bcrypt(user.getPassword()));
-
-        /*
-        User friend = userMapper.fromDTO( new UserDTO("Halina", "Pawlowska", "ultimatni@halina.com", Sex.FEMALE, null, null, "kozyjakovozy"));
-        friend.setSlug(this.buildUserSlug(friend));
-        friend.setPassword(Encryptor.bcrypt(friend.getPassword()));
-        userRepository.saveAndFlush(friend);
-        userRepository.saveAndFlush(user);
-        Dev.printObject(user);
-        Dev.printObject(friend);
-        user.addFriend(friend);
-        */
 
         return userRepository.saveAndFlush(user);
     }
 
     public boolean checkEmailAvailability(String email) {
         Long c = this.userRepository.countUsersByEmail(email);
-        Dev.print("E-mail already taken (" + c + ")");
         return c <= 0;
     }
 
@@ -141,8 +133,8 @@ public class UserServiceImpl implements UserService {
             u.setPhoto(user.getPhoto());
         }
 
-        this.userRepository.save(u);
-        return u;
+        this.userRepository.saveAndFlush(u);
+        return this.getUser(uID);
     }
 
     public boolean checkUserExists(String email, String hashedPwd) {

@@ -71,10 +71,22 @@ public class PostServiceImpl implements PostService {
         User user = this.userService.getAuthenticatedUser();
         List<User> friends = user.getFriends();
 
+        if(friends.size() <= 0) {
+            Dev.print("You have no friends.");
+            return new ArrayList<>();
+        }
+
+
+        Dev.print("Staling your friends, " + user.getFirstName());
+
         List<Long> ids = new LinkedList<>();
         for (User u : friends) ids.add(u.getId());
 
-        return this.postRepository.findPostsOfUsers(ids, offset, Config.POST_LIMIT);
+        Dev.printObject(ids);
+        List<Post> posts = this.postRepository.findPostsOfUsers(ids, offset, Config.POST_LIMIT);;
+        Dev.printObject(posts);
+
+        return posts;
     }
 
     public List<Post> getTagPosts(String tag, int offset) {

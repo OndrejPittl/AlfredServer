@@ -6,10 +6,7 @@ import cz.ondrejpittl.dev.Dev;
 
 import javax.persistence.*;
 import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
@@ -59,6 +56,11 @@ public class User {
      */
     @Column(nullable = false)
     private String slug;
+
+
+    private Date birth;
+
+
 
     /**
      * Password.
@@ -293,6 +295,14 @@ public class User {
         this.friendedBy = friendedBy;
     }
 
+    public Date getBirth() {
+        return birth;
+    }
+
+    public void setBirth(Date birth) {
+        this.birth = birth;
+    }
+
     /*
     public Set<Post> getRated() {
         return rated;
@@ -359,7 +369,7 @@ public class User {
 
         Dev.print("Approving friend request " + friendship.getUser().getEmail() + " –> " + friendship.getFriend().getEmail());
         friendship.approve();
-        return false;
+        return true;
     }
 
     public Friendship cancelFriendRequest(Long friendId) {
@@ -422,9 +432,20 @@ public class User {
         return friends;
     }
 
-    /*
-    public void addRated(Post p) {
-        this.rated.add(p);
+    public List<User> getIncomingFriendRequests() {
+        List<User> reqs = new ArrayList<>();
+        for (Friendship f : this.friendedBy) {
+            if(!f.isAccepted()) reqs.add(f.getUser());
+        }
+        return reqs;
     }
-    */
+
+    public List<User> getOutcomingFriendRequests() {
+        List<User> reqs = new ArrayList<>();
+        for (Friendship f : this.friendWith) {
+            if(!f.isAccepted()) reqs.add(f.getFriend());
+        }
+        return reqs;
+    }
+
 }

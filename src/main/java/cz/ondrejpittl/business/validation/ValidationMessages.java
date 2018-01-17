@@ -13,6 +13,7 @@ public class ValidationMessages {
 
         // general
         msgs.put("required",                    "This field is required.");
+        msgs.put("captcha",                     "Invalid captcha.");
 
         // user
         msgs.put("user.id.notfound",            "No User of given ID was found.");
@@ -26,6 +27,7 @@ public class ValidationMessages {
         msgs.put("user.confirmPassword.empty",  "Password confirmation is required.");
         msgs.put("user.sex",                    "Only male or female allowed.");
         msgs.put("user.slug.length",            "User slug must consist of at least 1 character.");
+        msgs.put("user.birth.past",             "The birth date must be a day in the past.");
 
 
         // post

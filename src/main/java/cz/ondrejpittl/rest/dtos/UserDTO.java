@@ -1,15 +1,19 @@
 package cz.ondrejpittl.rest.dtos;
 
-import cz.ondrejpittl.business.annotations.AllowedValues;
+import cz.ondrejpittl.business.annotations.CaptchaVerification;
 import cz.ondrejpittl.business.annotations.PasswordEquality;
+import cz.ondrejpittl.business.annotations.UniqueAssignedEmail;
 import cz.ondrejpittl.business.annotations.UniqueEmail;
 import cz.ondrejpittl.business.validation.CreateGroup;
 import cz.ondrejpittl.business.validation.ModifyGroup;
 import cz.ondrejpittl.persistence.domain.Sex;
 import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -64,7 +68,11 @@ public class UserDTO {
         message = "user.email.pattern"
     )
     @UniqueEmail(
-        groups = { CreateGroup.class, ModifyGroup.class },
+        groups = { CreateGroup.class },
+        message = "user.email.unique"
+    )
+    @UniqueAssignedEmail(
+        groups = { ModifyGroup.class },
         message = "user.email.unique"
     )
     private String email;
@@ -87,6 +95,22 @@ public class UserDTO {
      * URL profile slug.
      */
     private String slug;
+
+
+    @Past(
+        groups = { CreateGroup.class, ModifyGroup.class },
+        message = "user.birth.past"
+    )
+    private Date birth;
+
+    @NotNull(
+        groups = { CreateGroup.class },
+        message = "captcha"
+    )
+    @CaptchaVerification(
+        message = "captcha"
+    )
+    private String captcha;
 
     /**
      * Password.
@@ -111,12 +135,15 @@ public class UserDTO {
     )
     private String confirmPassword;
 
-
     private String token;
-
 
     private Set<PostDTO> posts;
 
+    private List<UserDTO> friends;
+
+    private List<UserDTO> inFReqs;
+
+    private List<UserDTO> outFReqs;
 
 
 
@@ -231,6 +258,45 @@ public class UserDTO {
         this.token = token;
     }
 
+    public List<UserDTO> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<UserDTO> friends) {
+        this.friends = friends;
+    }
+
+    public List<UserDTO> getInFReqs() {
+        return inFReqs;
+    }
+
+    public void setInFReqs(List<UserDTO> inFReqs) {
+        this.inFReqs = inFReqs;
+    }
+
+    public List<UserDTO> getOutFReqs() {
+        return outFReqs;
+    }
+
+    public void setOutFReqs(List<UserDTO> outFReqs) {
+        this.outFReqs = outFReqs;
+    }
+
+    public Date getBirth() {
+        return birth;
+    }
+
+    public void setBirth(Date birth) {
+        this.birth = birth;
+    }
+
+    public String getCaptcha() {
+        return captcha;
+    }
+
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
+    }
 
     /*
     @AssertTrue (
