@@ -37,6 +37,9 @@ public class PostServiceImpl implements PostService {
     @Inject
     CommentService commentService;
 
+    @Inject
+    RatingService ratingService;
+
 
 
 
@@ -140,14 +143,22 @@ public class PostServiceImpl implements PostService {
         Post post = this.postRepository.findBy(id);
         Set<Tag> tags = post.getTags();
 
-        List<Long> comIDs = new ArrayList<>();
-        for(Comment c : post.getComments()) {
-            comIDs.add(c.getId());
+        if(post.getComments().size() > 0) {
+            List<Long> comIDs = new ArrayList<>();
+            for(Comment c : post.getComments()) {
+                comIDs.add(c.getId());
+            }
+            this.commentService.removePostComments(comIDs);
         }
 
-        this.commentService.removePostComments(comIDs);
-
-        //Dev.print("POST DELETE: Removing Post ID " + id);
+        if(post.getRating().size() > 0) {
+            List<Long> rIDs = new ArrayList<>();
+            for(Rating r : post.getRating()) {
+                rIDs.add(r.getId());
+            }
+            Dev.printObject(rIDs);
+            this.ratingService.removePostRatings(rIDs);
+        }
 
         this.postRepository.removeById(id);
         this.postRepository.flush();
@@ -163,9 +174,7 @@ public class PostServiceImpl implements PostService {
         Post p = this.postMapper.fromDTO(dto);
         Set<Tag> prevTags = null;
 
-        //Dev.print("POST PUT: Looking fot Post ID " + id);
         Post orig = this.getPost(id);
-        //Dev.print("POST PUT: Modifying Post ID " + id);
 
 
         if(orig == null) {
@@ -182,7 +191,7 @@ public class PostServiceImpl implements PostService {
             modified = true;
         }
 
-        if(!p.getImage().equals(orig.getImage())) {
+        if(p.getImage() != null & !p.getImage().equals(orig.getImage())) {
             orig.setImage(p.getImage());
             modified = true;
         }

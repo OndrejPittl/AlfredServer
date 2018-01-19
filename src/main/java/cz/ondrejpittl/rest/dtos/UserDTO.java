@@ -7,6 +7,7 @@ import cz.ondrejpittl.business.annotations.UniqueEmail;
 import cz.ondrejpittl.business.validation.CreateGroup;
 import cz.ondrejpittl.business.validation.ModifyGroup;
 import cz.ondrejpittl.persistence.domain.Sex;
+import cz.ondrejpittl.utils.Units;
 import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -89,6 +90,11 @@ public class UserDTO {
     /**
      * Profile photo.
      */
+    @Size(
+        groups = { CreateGroup.class, ModifyGroup.class },
+        max = Units.TINY_TEXT_SIZE,
+        message = "photo.size"
+    )
     private String photo = "https://goo.gl/uJ7SMr";
 
     /**
@@ -121,7 +127,7 @@ public class UserDTO {
     )
     @Pattern(
         groups = { CreateGroup.class, ModifyGroup.class },
-        regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,50}$",
+        regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
         message = "user.password"
     )
     private String password;

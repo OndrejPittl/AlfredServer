@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @ApplicationScoped
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)

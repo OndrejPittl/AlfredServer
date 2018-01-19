@@ -14,6 +14,7 @@ public class ValidationMessages {
         // general
         msgs.put("required",                    "This field is required.");
         msgs.put("captcha",                     "Invalid captcha.");
+        msgs.put("photo.size",                  "The image is too large.");
 
         // user
         msgs.put("user.id.notfound",            "No User of given ID was found.");
@@ -22,7 +23,7 @@ public class ValidationMessages {
         msgs.put("user.lastName",               "Please enter your last name (1 – 50 characters long).");
         msgs.put("user.email.unique",           "The e-mail is already taken.");
         msgs.put("user.email.pattern",          "Please enter a valid e-mail address (e.g. you@domain.com).");
-        msgs.put("user.password",               "Your password must contain at least 8 and max 50 characters, including at least one letter and one number.");
+        msgs.put("user.password",               "Your password must contain at least 8 and max 50 characters, including at least one letter, one number and one special character.");
         msgs.put("user.confirmPassword",        "Passwords must match.");
         msgs.put("user.confirmPassword.empty",  "Password confirmation is required.");
         msgs.put("user.sex",                    "Only male or female allowed.");

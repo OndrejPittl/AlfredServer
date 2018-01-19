@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
@@ -72,5 +73,10 @@ public class RatingServiceImpl implements RatingService {
         }
 
         return this.postService.getPost(postId);
+    }
+
+    public void removePostRatings(List<Long> rIDs) {
+        int num = this.ratingRepository.removePostRatings(rIDs);
+        this.ratingRepository.flush();
     }
 }

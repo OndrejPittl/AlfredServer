@@ -165,8 +165,6 @@ public class PostEndpoint {
     @POST
     @Secured    //@Valid
     public Response createPost(PostDTO post) {
-        //Dev.print("Create Post Endpoint reached!");
-        //Dev.printObject(post);
         List<Post> posts = postService.createPost(post);
         return Response.ok(this.postRestMapper.toDTOs(posts)).build();
     }
@@ -191,9 +189,7 @@ public class PostEndpoint {
         return Response.ok(dto).build();
     }
 
-
     /*
-
     @POST
     @Path("/{id}/fileupload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -202,13 +198,11 @@ public class PostEndpoint {
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail) {
 
-
         // image location
         String uploadedFileLocation = Config.IMAGES_DESTINATION + fileDetail.getFileName();
         //System.out.println(uploadedFileLocation);
 
-
-        // save it
+        // save
         File objFile = new File(uploadedFileLocation);
         if(objFile.exists()) {
             objFile.delete();
@@ -217,16 +211,13 @@ public class PostEndpoint {
         saveToFile(uploadedInputStream, uploadedFileLocation);
 
         String output = "File saved to: " + uploadedFileLocation;
-
         //Dev.print(output);
 
         //return Response.status(200).entity(output).build();
         return Response.ok(new PostDTO()).build();
 
     }
-    private void saveToFile(InputStream uploadedInputStream,
-                            String uploadedFileLocation) {
-
+    private void saveToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
         try {
             OutputStream out = null;
             int read = 0;
@@ -241,7 +232,6 @@ public class PostEndpoint {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -271,7 +261,7 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id, PostDTO post) {
-        //Dev.print("POST PUT: Endpoint reached.");
+        Dev.printObject(post);
         return Response.ok(this.postRestMapper.toDTO(postService.modifyPost(id, post))).build();
     }
 

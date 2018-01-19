@@ -48,7 +48,7 @@ public class User {
     /**
      * Profile photo. TEXT
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String photo;
 
     /**
