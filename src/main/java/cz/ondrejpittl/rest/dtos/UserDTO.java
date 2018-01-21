@@ -95,7 +95,7 @@ public class UserDTO {
         max = Units.TINY_TEXT_SIZE,
         message = "photo.size"
     )
-    private String photo = "https://goo.gl/uJ7SMr";
+    private String photo;
 
     /**
      * URL profile slug.
@@ -303,19 +303,5 @@ public class UserDTO {
     public void setCaptcha(String captcha) {
         this.captcha = captcha;
     }
-
-    /*
-    @AssertTrue (
-        groups = { CreateGroup.class, ModifyGroup.class }
-    )
-    private boolean checkPwdEquality() {
-        boolean rs = this.password == null || this.password.equals(this.confirmPassword);
-        //Dev.print("Checking passwords");
-        //Dev.printObject(this.password);
-        //Dev.printObject(this.confirmPassword);
-        //Dev.printObject(rs);
-        return rs;
-    }
-    */
 
 }

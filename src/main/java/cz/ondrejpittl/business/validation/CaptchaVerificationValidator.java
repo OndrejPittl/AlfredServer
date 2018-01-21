@@ -11,7 +11,6 @@ public class CaptchaVerificationValidator implements ConstraintValidator<Captcha
     public void initialize(CaptchaVerification annotation) { }
 
     public boolean isValid(String captcha, ConstraintValidatorContext context) {
-        //Dev.print(captcha);
         return captcha.equals("14");
     }
 }

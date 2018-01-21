@@ -11,4 +11,6 @@ public class Encryptor {
     public static boolean verify(String password, String hashedPassword) {
         return BCrypt.checkpw(password, hashedPassword);
     }
+
+
 }

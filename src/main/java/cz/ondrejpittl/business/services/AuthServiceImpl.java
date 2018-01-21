@@ -75,8 +75,6 @@ public class AuthServiceImpl implements AuthService {
     public void rejectUser(String authString) {
         String token = authString.split(" ")[1];
 
-        //Dev.print("Logging out user with token " + token);
-
         if(this.sessionUsers.containsKey(token)) {
             this.sessionUsers.remove(token);
         }

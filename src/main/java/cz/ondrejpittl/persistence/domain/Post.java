@@ -48,7 +48,7 @@ public class Post {
     /**
      * Post image. TEXT
      */
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String image;
 
     /**

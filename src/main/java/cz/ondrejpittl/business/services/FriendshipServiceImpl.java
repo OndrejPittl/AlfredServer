@@ -43,9 +43,6 @@ public class FriendshipServiceImpl implements FriendshipService {
     private Set<User> collectFriendships(boolean accepted) {
         User user = this.userService.getAuthenticatedUser();
 
-        //Dev.print("Getting friend[ships|requests] of:");
-        //Dev.printObject(user);
-
         HashSet<User> friends = new HashSet<>();
         for(Friendship f : user.getFriendWith()) {
             if(f.isAccepted() == accepted && !f.getFriend().isDisabled()) {

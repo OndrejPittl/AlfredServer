@@ -189,68 +189,6 @@ public class PostEndpoint {
         return Response.ok(dto).build();
     }
 
-    /*
-    @POST
-    @Path("/{id}/fileupload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadPostImage(
-            @PathParam("id") final Long id,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail) {
-
-        // image location
-        String uploadedFileLocation = Config.IMAGES_DESTINATION + fileDetail.getFileName();
-        //System.out.println(uploadedFileLocation);
-
-        // save
-        File objFile = new File(uploadedFileLocation);
-        if(objFile.exists()) {
-            objFile.delete();
-        }
-
-        saveToFile(uploadedInputStream, uploadedFileLocation);
-
-        String output = "File saved to: " + uploadedFileLocation;
-        //Dev.print(output);
-
-        //return Response.status(200).entity(output).build();
-        return Response.ok(new PostDTO()).build();
-
-    }
-    private void saveToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
-        try {
-            OutputStream out = null;
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            out = new FileOutputStream(new File(uploadedFileLocation));
-            while ((read = uploadedInputStream.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-    @Path("/uploadfile")
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(MultipartFormDataInput input) {
-        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-        List<InputPart> inputParts = uploadForm.get("file");
-
-        return Response.ok().build();
-    }
-
-*/
-
-
-
 
     // --------------- PUT ---------------
 
@@ -261,7 +199,6 @@ public class PostEndpoint {
             @PathParam("id")
             @Min(value = 1, message = "post.id.negative")
             @ExistingPost(message = "post.id.notfound") final Long id, PostDTO post) {
-        Dev.printObject(post);
         return Response.ok(this.postRestMapper.toDTO(postService.modifyPost(id, post))).build();
     }
 
@@ -302,7 +239,6 @@ public class PostEndpoint {
 
         Post post = ratingService.cancelRating(id);
         PostDTO dto = this.postRestMapper.toDTO(post);
-        //dto.setUserRated(false);
 
         return Response.ok(dto).build();
     }

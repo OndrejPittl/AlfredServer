@@ -6,6 +6,7 @@ import cz.ondrejpittl.mappers.PostRestMapper;
 import cz.ondrejpittl.persistence.domain.*;
 import cz.ondrejpittl.persistence.repository.PostRepository;
 import cz.ondrejpittl.rest.dtos.PostDTO;
+import cz.ondrejpittl.utils.IOManager;
 import org.apache.deltaspike.data.api.Modifying;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -75,19 +76,13 @@ public class PostServiceImpl implements PostService {
         List<User> friends = user.getFriends();
 
         if(friends.size() <= 0) {
-            //Dev.print("You have no friends.");
             return new ArrayList<>();
         }
-
-
-        //Dev.print("Staling your friends, " + user.getFirstName());
 
         List<Long> ids = new LinkedList<>();
         for (User u : friends) ids.add(u.getId());
 
-        //Dev.printObject(ids);
         List<Post> posts = this.postRepository.findPostsOfUsers(ids, offset, Config.POST_LIMIT);;
-        //Dev.printObject(posts);
 
         return posts;
     }
@@ -128,9 +123,11 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public List<Post> createPost(PostDTO dto) {
         Post p = postMapper.fromDTO(dto);
-        User u = this.userService.getAuthenticatedUser();
+        p.setUser(this.userService.getAuthenticatedUser());
 
-        p.setUser(u);
+        if(p.getImage() != null && p.getImage().length() > 0) {
+            p.setImage(IOManager.saveFile(p.getImage()));
+        }
 
         this.postRepository.saveAndFlush(p);
         return this.getPosts(0);
@@ -138,8 +135,6 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     public List<Post> removePost(Long id) {
-        //Dev.print("POST DELETE: Looking for Post ID " + id);
-
         Post post = this.postRepository.findBy(id);
         Set<Tag> tags = post.getTags();
 
@@ -156,8 +151,11 @@ public class PostServiceImpl implements PostService {
             for(Rating r : post.getRating()) {
                 rIDs.add(r.getId());
             }
-            Dev.printObject(rIDs);
             this.ratingService.removePostRatings(rIDs);
+        }
+
+        if(post.getImage() != null) {
+            IOManager.removeFile(post.getImage());
         }
 
         this.postRepository.removeById(id);
@@ -192,7 +190,8 @@ public class PostServiceImpl implements PostService {
         }
 
         if(p.getImage() != null & !p.getImage().equals(orig.getImage())) {
-            orig.setImage(p.getImage());
+            IOManager.removeFile(orig.getImage());
+            orig.setImage(IOManager.saveFile(p.getImage()));
             modified = true;
         }
 
