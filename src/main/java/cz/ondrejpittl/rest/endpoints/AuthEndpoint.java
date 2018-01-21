@@ -47,9 +47,9 @@ public class AuthEndpoint {
     @Path("/me")
     public Response whoami() {
         User user = this.userService.getAuthenticatedUser();
-        return Response.ok(userMapper.toDTO(user)).build();
+        UserDTO dto = userMapper.toDTO(user, false);
+        return Response.ok(dto).build();
     }
-
 
     // ------------------- POST -------------------
 

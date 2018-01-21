@@ -73,8 +73,6 @@ public class UserServiceImpl implements UserService {
         user.setSlug(this.buildUserSlug(user));
         user.setPassword(Encryptor.bcrypt(user.getPassword()));
 
-        Dev.print(user.getPhoto());
-
         if(user.getPhoto() != null && user.getPhoto().length() > 0) {
             user.setPhoto(IOManager.saveFile(user.getPhoto()));
         }

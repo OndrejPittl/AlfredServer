@@ -90,7 +90,7 @@ public class UserRestMapper {
         return dto;
     }
 
-    private UserDTO toBasicDTO(User user) {
+    public UserDTO toBasicDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
